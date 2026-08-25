@@ -22,7 +22,7 @@ kotlinx-serialization = "1.11.0"
 retrofit-serialization = "1.0.0"
 
 ktor = "3.5.2"
-logback-android = "3.0.0"
+# logback-android = "3.0.0"
 
 coil = "2.7.0"
 
@@ -34,6 +34,7 @@ datastore = "1.2.1"
 
 #kotlinx-coroutines-test = "1.11.0"
 #mockito-kotlin = "6.3.0"
+slf4jSimple = "2.0.18"
 tinkAndroid = "1.23.0"
 
 desugar_jdk_libs = "2.1.5"
@@ -53,7 +54,10 @@ osmdroid-android = { group = "org.osmdroid", name = "osmdroid-android", version.
 
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
-logback-android = { group = "com.github.tony19", name = "logback-android", version.ref = "logback-android" }
+slf4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4jSimple" }
+
+ktor-client-auth = { group = "io.ktor", name = "ktor-client-auth", version.ref = "ktor" }
+# logback-android = { group = "com.github.tony19", name = "logback-android", version.ref = "logback-android" }
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }

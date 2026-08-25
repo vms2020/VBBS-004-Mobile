@@ -54,6 +54,8 @@ dependencies {
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.tink.android)
 
@@ -63,7 +65,9 @@ dependencies {
 
     implementation(libs.coil.compose)
 
-    implementation(libs.logback.android)
+    implementation(libs.ktor.client.auth)
+    implementation(libs.slf4j.simple)
+   // implementation(libs.logback.android)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.content.negotiation)
