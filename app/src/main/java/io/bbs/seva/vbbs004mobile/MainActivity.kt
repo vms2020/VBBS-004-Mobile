@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,6 +27,7 @@ import io.bbs.seva.vbbs004mobile.presentation.login.LoginScreen
 import io.bbs.seva.vbbs004mobile.presentation.login.LoginViewModel
 import io.bbs.seva.vbbs004mobile.presentation.navigation.Destination
 import io.bbs.seva.vbbs004mobile.presentation.weather.WeatherScreen
+import io.bbs.seva.vbbs004mobile.session.SessionManager
 import io.bbs.seva.vbbs004mobile.ui.theme.Vbbs004MobileTheme
 import javax.inject.Inject
 
@@ -36,6 +38,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var authRepository: AuthRepository
+
+    @Inject
+    lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +81,13 @@ class MainActivity : ComponentActivity() {
                 // Your developer-owned backstack list
                 val backstack = rememberNavBackStack(startDestination)
 
+                LaunchedEffect(Unit) {
+                    sessionManager.logoutEvents.collect {
+                        //backstack.removeAll { true } // or backstack.clear() if available
+                        backstack.clear()
+                        backstack.add(Destination.Login)
+                    }
+                }
                 // Map your destinations using the base NavKey generic definition
                 val myEntryProvider = remember {
                     entryProvider<NavKey> {
