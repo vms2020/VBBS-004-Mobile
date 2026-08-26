@@ -9,6 +9,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.bbs.seva.vbbs004mobile.BuildConfig
+import io.bbs.seva.vbbs004mobile.data.remote.dto.AuthTokensDto
 import io.bbs.seva.vbbs004mobile.data.repository.AuthRepositoryImpl
 import io.bbs.seva.vbbs004mobile.data.security.AuthTokens
 import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
@@ -108,7 +109,7 @@ object NetworkModule {
 
                             if (response.status == HttpStatusCode.OK) {
                                 val newTokens =
-                                    response.body<AuthTokens>()
+                                    response.body<AuthTokensDto>()
 
                                 authDataStore.updateData {
                                     it.copy(

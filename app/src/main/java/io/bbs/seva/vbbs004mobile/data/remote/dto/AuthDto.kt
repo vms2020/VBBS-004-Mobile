@@ -46,3 +46,11 @@ data class User(
     @SerialName("app_metadata")
     val appMetadata: AppMetadata,
 )
+
+@Serializable
+data class AuthTokensDto(
+    @SerialName("access_token")
+    val accessToken: String? = null,
+    @SerialName("refresh_token")
+    val refreshToken: String? = null
+)
