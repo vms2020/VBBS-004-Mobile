@@ -104,10 +104,10 @@ fun AppRoot(
             entry<Destination.Home> {
                 val viewModel: HomeViewModel = hiltViewModel()
                 HomeScreen(
-                    onBack = {
-                        if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
-                    },
-                    onNavigateToWeather = { backstack.add(Destination.Weather) },
+//                    onBack = {
+//                        if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
+//                    },
+//                    onNavigateToWeather = { backstack.add(Destination.Weather) },
                     viewModel = viewModel,
                 )
             }
