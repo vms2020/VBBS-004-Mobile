@@ -52,12 +52,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun getMenuItems(isAuthenticated: Boolean): List<MenuItem> {
 
-    Log.i(
-        "GETMENUITEMS",
-        "!!!!!!!!!!!!!!\n" +
-                "getMenuItems: ${Destination.all}\n" +
-                "!!!!!!!!!!!!!!!!"
-    )
+//    Log.i(
+//        "GETMENUITEMS",
+//        "!!!!!!!!!!!!!!\n" +
+//                "getMenuItems: ${Destination.all}\n" +
+//                "!!!!!!!!!!!!!!!!"
+//    )
     return Destination.all
         .filter { dest ->
             when {
@@ -123,6 +123,7 @@ fun AppRoot(
 
     LaunchedEffect(Unit) {
         sessionManager.logoutEvents.collect {
+            Log.i("APPROOT", "!!!!!!!!!!!!!!!!!!!!!!!!\nAppRoot: backstack.add(Destination.Login)\n!!!!!!!!!!!!!!")
             backstack.removeAll { true }
             backstack.add(Destination.Login)
         }

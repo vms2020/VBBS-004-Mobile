@@ -14,6 +14,7 @@ import io.bbs.seva.vbbs004mobile.di.ProfileDataStore
 import io.bbs.seva.vbbs004mobile.di.TokensDataStore
 import io.bbs.seva.vbbs004mobile.domain.model.User
 import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
+import io.bbs.seva.vbbs004mobile.session.SessionManager
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -31,6 +32,7 @@ class AuthRepositoryImpl @Inject constructor(
     private val httpClient: HttpClient,
     @TokensDataStore private val authDataStore: DataStore<AuthTokens>,
     @ProfileDataStore private val profileDataStore: DataStore<UserProfile>,
+    val sessionManager: SessionManager,
 ) : AuthRepository {
 
     private val baseUrl = BuildConfig.BASE_URL
@@ -98,6 +100,7 @@ class AuthRepositoryImpl @Inject constructor(
         )
         authDataStore.updateData { AuthTokens() }
         profileDataStore.updateData { UserProfile() }
+        sessionManager.emitLogout()
     }
 
     override suspend fun updateProfile(
