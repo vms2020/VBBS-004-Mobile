@@ -3,14 +3,16 @@ package io.bbs.seva.vbbs004mobile.data.repository
 // data/repository/WeatherRepositoryImpl.kt
 import io.bbs.seva.vbbs004mobile.BuildConfig
 import io.bbs.seva.vbbs004mobile.data.remote.dto.weather.OpenWeatherMapWeatherDto
-import io.bbs.seva.vbbs004mobile.data.remote.dto.weather.WeatherDto
 import io.bbs.seva.vbbs004mobile.data.remote.dto.weather.forecast.OpenWeatherMapForecastDto
+import io.bbs.seva.vbbs004mobile.data.remote.dto.weather.forecast.toDomain
+import io.bbs.seva.vbbs004mobile.data.remote.dto.weather.toDomain
 import io.bbs.seva.vbbs004mobile.domain.model.weather.Forecast
 import io.bbs.seva.vbbs004mobile.domain.model.weather.Weather
 import io.bbs.seva.vbbs004mobile.domain.repository.WeatherRepository
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
@@ -18,11 +20,6 @@ class WeatherRepositoryImpl @Inject constructor(
 ) : WeatherRepository {
 
     private val baseUrl = BuildConfig.BASE_URL
-
-    companion object {
-        private const val DEFAULT_LAT = 55.6107
-        private const val DEFAULT_LON = 37.7597
-    }
 
     override suspend fun getCurrentWeather(
         lat: Double,
@@ -33,10 +30,11 @@ class WeatherRepositoryImpl @Inject constructor(
             parameter("lat", lat)
             parameter("lon", lon)
         }.body<OpenWeatherMapWeatherDto>()
-        return Weather(
-            temperature = dto.main?.temp ?: 9999.99,
-            condition = dto.weather?.get(0)?.description ?: "xxx"
-        )
+        return dto.toDomain()
+//        Weather(
+//            temperature = dto.main?.temp ?: 9999.99,
+//            condition = dto.weather?.get(0)?.description ?: "xxx"
+//        )
     }
 
     override suspend fun getWeatherForecast(
@@ -47,11 +45,12 @@ class WeatherRepositoryImpl @Inject constructor(
             parameter("lat", lat)
             parameter("lon", lon)
         }.body<OpenWeatherMapForecastDto>()
-        return Forecast(items = dto.list?.map {
-            Weather(
-                it?.main?.temp ?: 9999.99,
-                it?.weather?.get(0)?.description ?: "xxx"
-            )
+        return Forecast(items = dto.list?.mapNotNull { w ->
+            w?.toDomain()
+//            Weather(
+//                it?.main?.temp ?: 9999.99,
+//                it?.weather?.get(0)?.description ?: "xxx"
+//            )
         } ?: listOf())
     }
 }

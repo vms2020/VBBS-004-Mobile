@@ -113,9 +113,9 @@ fun AppRoot(
             }
             entry<Destination.Weather> {
                 WeatherScreen(
-                    onBack = {
-                        if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
-                    },
+//                    onBack = {
+//                        if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
+//                    },
                 )
             }
         }

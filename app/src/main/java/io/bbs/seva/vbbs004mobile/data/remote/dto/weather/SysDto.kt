@@ -61,7 +61,7 @@ data class SysDto(
     @SerialName("country")
     val country: String? = null,
     @SerialName("sunrise")
-    val sunrise: Int? = null,
+    val sunrise: Long? = null,
     @SerialName("sunset")
-    val sunset: Int? = null
+    val sunset: Long? = null
 )

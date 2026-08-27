@@ -53,8 +53,7 @@ android {
 dependencies {
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
-
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
 
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.tink.android)
