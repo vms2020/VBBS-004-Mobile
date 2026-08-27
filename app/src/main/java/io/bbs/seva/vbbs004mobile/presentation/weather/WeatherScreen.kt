@@ -284,7 +284,7 @@ fun ForecastItemRow(weather: Weather, modifier: Modifier = Modifier) {
                 Box(
                    modifier = Modifier.size(48.dp)
                        .clip(RoundedCornerShape(8.dp))
-                       .background(Color.Gray)
+                       .background(Color.LightGray)
                     ,
                 ) {
                     AsyncImage(
