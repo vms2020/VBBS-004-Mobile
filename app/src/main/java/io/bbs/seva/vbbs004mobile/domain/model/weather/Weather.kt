@@ -7,6 +7,7 @@ data class Weather(
     val condition: String,
     val icon: String? = null,
     val time: Long? = null,
+    val cityName: String? = null
 )
 
 data class Forecast(val items: List<Weather>)

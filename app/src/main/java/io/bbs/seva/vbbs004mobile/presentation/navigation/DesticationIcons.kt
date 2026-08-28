@@ -8,6 +8,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.WbSunny
@@ -25,6 +26,7 @@ fun getDestinationIcon(destination: Destination): ImageVector {
         Destination.Blogs -> Icons.AutoMirrored.Filled.Article
         Destination.Shops -> Icons.Default.ShoppingCart
         Destination.Chats -> Icons.AutoMirrored.Filled.Chat
+        is Destination.GeoLocationDest -> Icons.Default.Map
         //else -> Icons.Default.Star
     }
 }

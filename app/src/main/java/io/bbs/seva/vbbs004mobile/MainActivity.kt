@@ -12,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.bbs.seva.vbbs004mobile.data.datastore.model.UserProfile
 import io.bbs.seva.vbbs004mobile.di.ProfileDataStore
 import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
+import io.bbs.seva.vbbs004mobile.domain.repository.GeoLocationRepository
 import io.bbs.seva.vbbs004mobile.presentation.home.HomeUiState
 import io.bbs.seva.vbbs004mobile.presentation.home.HomeViewModel
 import io.bbs.seva.vbbs004mobile.presentation.root.AppRoot
@@ -29,6 +30,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var sessionManager: SessionManager
+
+    @Inject
+    lateinit var gelLocationRepository: GeoLocationRepository
 
     //@Inject
     //lateinit var profileDataStore: ProfileDataStore
@@ -59,6 +63,7 @@ class MainActivity : ComponentActivity() {
                         sessionManager = sessionManager,
                         //                homeViewModel = viewModel,
                         initialAuthState = initialAuthState,
+                        locationRepository = gelLocationRepository,
                     )
                 }
             }

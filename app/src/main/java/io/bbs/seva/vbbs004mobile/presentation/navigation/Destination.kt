@@ -2,6 +2,7 @@ package io.bbs.seva.vbbs004mobile.presentation.navigation
 // presentation/navigation/Destination.kt
 
 import androidx.navigation3.runtime.NavKey
+import io.bbs.seva.vbbs004mobile.domain.model.GeoLocation
 import kotlinx.serialization.Serializable
 
 
@@ -16,6 +17,9 @@ sealed class Destination : NavKey {
 
     @Serializable
     data object Weather : Destination()
+
+    @Serializable
+    class GeoLocationDest(val geoLocation: GeoLocation): Destination()
 
     // New
     @Serializable
@@ -45,6 +49,7 @@ sealed class Destination : NavKey {
             Login -> "Login"
             Home -> "Home"
             Weather -> "Weather"
+            is GeoLocationDest -> "Geo Location"
             CurrencyRates -> "Currency Rates"
             Signup -> "Sign Up"
             Logout -> "Logout"
@@ -84,6 +89,12 @@ sealed class Destination : NavKey {
         val all: List<Destination> by lazy {
             Destination::class.sealedSubclasses
                 .mapNotNull { it.objectInstance }
+                .toMutableList()
+                .apply {
+                    // Add a default GeoLocationDest for the menu
+                    // (You will pass the real GeoLocation when navigating)
+                    add(GeoLocationDest(GeoLocation(0.0, 0.0)))
+                }
         }
 
     }

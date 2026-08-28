@@ -204,6 +204,15 @@ fun CurrentWeatherHeaderCard(weather: Weather, modifier: Modifier = Modifier) {
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            if(weather.cityName!=null){
+                Text(
+                    text = weather.cityName,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                )
+            }
+
             if (weather.time != null) {
                 Text(
                     text = formatWeatherTime(weather.time),

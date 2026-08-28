@@ -92,4 +92,5 @@ fun OpenWeatherMapWeatherDto.toDomain() = Weather(
     time = this.dt,
     //zonedDateTime = Instant.ofEpochSecond(this.dt ?: 0).atZone(ZoneId.systemDefault())
     //    .toString()
+    cityName = this.name,
 )
