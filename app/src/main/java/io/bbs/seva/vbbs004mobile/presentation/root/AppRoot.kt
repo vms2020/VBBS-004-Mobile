@@ -1,13 +1,20 @@
 package io.bbs.seva.vbbs004mobile.presentation.root
+// app/src/main/java/io/bbs/seva/vbbs004mobile/presentation/root/AppRoot.kt
 
+import android.Manifest
 import android.util.Log
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -20,6 +27,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
@@ -28,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -51,13 +60,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun getMenuItems(isAuthenticated: Boolean): List<MenuItem> {
-
-//    Log.i(
-//        "GETMENUITEMS",
-//        "!!!!!!!!!!!!!!\n" +
-//                "getMenuItems: ${Destination.all}\n" +
-//                "!!!!!!!!!!!!!!!!"
-//    )
     return Destination.all
         .filter { dest ->
             when {
@@ -76,14 +78,56 @@ fun getMenuItems(isAuthenticated: Boolean): List<MenuItem> {
 @Composable
 fun AppRoot(
     authRepository: AuthRepository,
-    sessionManager: SessionManager
+    sessionManager: SessionManager,
+//    homeViewModel: HomeViewModel,
+    initialAuthState: Boolean,
 ) {
     val activity = LocalActivity.current
-    val isAuthenticatedState = authRepository.isAuthenticated.collectAsState(initial = null)
+    val isAuthenticatedState = authRepository.isAuthenticated.collectAsState(initial = initialAuthState)
     val isAuthenticated = isAuthenticatedState.value
-    if (isAuthenticated == null) {
-        // Splash screen
-        return
+
+//    if (isAuthenticated == null) {
+//        // Splash screen
+////        Surface(
+////            Modifier.fillMaxSize()
+////        ) {
+////            Box(
+////                Modifier.fillMaxSize(),
+////                contentAlignment = Alignment.Center,
+////            ) {
+////                CircularProgressIndicator()
+////            }
+////        }
+//        return
+//    }
+
+    // 1. Create the permission launcher
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+
+        if (fineLocationGranted || coarseLocationGranted) {
+            // Permission granted!
+            // You can trigger a ViewModel event here to start fetching location
+            Log.i("APPROOT", "Location permission granted!")
+        } else {
+            // Permission denied. Handle gracefully (e.g., show a message or use a default location)
+            Log.w("APPROOT", "Location permission denied!")
+        }
+    }
+
+    // 2. Trigger the permission request when user becomes authenticated
+    LaunchedEffect(isAuthenticated) {
+        if (isAuthenticated) {
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
     }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -103,6 +147,7 @@ fun AppRoot(
             }
             entry<Destination.Home> {
                 val viewModel: HomeViewModel = hiltViewModel()
+                //val viewModel: HomeViewModel = homeViewModel
                 HomeScreen(
 //                    onBack = {
 //                        if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
@@ -123,7 +168,10 @@ fun AppRoot(
 
     LaunchedEffect(Unit) {
         sessionManager.logoutEvents.collect {
-            Log.i("APPROOT", "!!!!!!!!!!!!!!!!!!!!!!!!\nAppRoot: backstack.add(Destination.Login)\n!!!!!!!!!!!!!!")
+            Log.i(
+                "APPROOT",
+                "!!!!!!!!!!!!!!!!!!!!!!!!\nAppRoot: backstack.add(Destination.Login)\n!!!!!!!!!!!!!!"
+            )
             backstack.removeAll { true }
             backstack.add(Destination.Login)
         }
@@ -146,7 +194,7 @@ fun AppRoot(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 8.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                    verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween
                 ) {
 

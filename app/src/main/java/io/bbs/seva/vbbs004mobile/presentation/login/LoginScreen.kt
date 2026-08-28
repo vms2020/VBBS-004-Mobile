@@ -36,7 +36,7 @@ fun LoginScreen(
 
     Column(
         modifier = modifier
-            .imePadding()
+            //.imePadding()
             .verticalScroll(rememberScrollState())
             .fillMaxSize()
             .padding(24.dp),
