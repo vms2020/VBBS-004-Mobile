@@ -1,4 +1,4 @@
-package io.bbs.seva.vbbs004mobile.presentation.osm
+package io.bbs.seva.vbbs004mobile.presentation.screens.osm
 
 import android.location.Location
 import androidx.lifecycle.ViewModel

@@ -4,17 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import io.bbs.seva.vbbs004mobile.data.datastore.model.UserProfile
-import io.bbs.seva.vbbs004mobile.di.ProfileDataStore
 import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
 import io.bbs.seva.vbbs004mobile.domain.repository.GeoLocationRepository
-import io.bbs.seva.vbbs004mobile.presentation.home.HomeUiState
-import io.bbs.seva.vbbs004mobile.presentation.home.HomeViewModel
 import io.bbs.seva.vbbs004mobile.presentation.root.AppRoot
 import io.bbs.seva.vbbs004mobile.session.SessionManager
 import io.bbs.seva.vbbs004mobile.ui.theme.Vbbs004MobileTheme

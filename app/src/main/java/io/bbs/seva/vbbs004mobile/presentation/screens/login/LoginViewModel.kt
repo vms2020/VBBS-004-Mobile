@@ -1,4 +1,4 @@
-package io.bbs.seva.vbbs004mobile.presentation.login
+package io.bbs.seva.vbbs004mobile.presentation.screens.login
 
 // presentation/login/LoginViewModel.kt
 import androidx.lifecycle.ViewModel

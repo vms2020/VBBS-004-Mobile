@@ -1,5 +1,5 @@
 // presentation/home/HomeScreen.kt
-package io.bbs.seva.vbbs004mobile.presentation.home
+package io.bbs.seva.vbbs004mobile.presentation.screens.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,6 +1,6 @@
-package io.bbs.seva.vbbs004mobile.presentation.weather
+package io.bbs.seva.vbbs004mobile.presentation.screens.weather
 
-// presentation/weather/WeatherViewModel.kt
+// presentation/screens/weather/WeatherViewModel.kt
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel

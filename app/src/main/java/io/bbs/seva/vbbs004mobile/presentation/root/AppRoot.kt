@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
@@ -55,20 +54,25 @@ import io.bbs.seva.vbbs004mobile.domain.constant.LocationConstants
 import io.bbs.seva.vbbs004mobile.domain.model.GeoLocation
 import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
 import io.bbs.seva.vbbs004mobile.domain.repository.GeoLocationRepository
-import io.bbs.seva.vbbs004mobile.presentation.home.HomeScreen
-import io.bbs.seva.vbbs004mobile.presentation.home.HomeViewModel
-import io.bbs.seva.vbbs004mobile.presentation.login.LoginScreen
-import io.bbs.seva.vbbs004mobile.presentation.login.LoginViewModel
+import io.bbs.seva.vbbs004mobile.presentation.screens.home.HomeScreen
+import io.bbs.seva.vbbs004mobile.presentation.screens.home.HomeViewModel
+import io.bbs.seva.vbbs004mobile.presentation.screens.login.LoginScreen
+import io.bbs.seva.vbbs004mobile.presentation.screens.login.LoginViewModel
 import io.bbs.seva.vbbs004mobile.presentation.menu.MenuItem
 import io.bbs.seva.vbbs004mobile.presentation.navigation.Destination
 import io.bbs.seva.vbbs004mobile.presentation.navigation.getDestinationIcon
-import io.bbs.seva.vbbs004mobile.presentation.osm.OsmPickerScreen
-import io.bbs.seva.vbbs004mobile.presentation.osm.OsmPickerViewModel
-import io.bbs.seva.vbbs004mobile.presentation.weather.WeatherScreen
+import io.bbs.seva.vbbs004mobile.presentation.screens.blogs.BlogsScreen
+import io.bbs.seva.vbbs004mobile.presentation.screens.chats.ChatsScreen
+import io.bbs.seva.vbbs004mobile.presentation.screens.currency_rates.CurrencyRatesScreen
+import io.bbs.seva.vbbs004mobile.presentation.screens.edit_profile.EditProfileScreen
+import io.bbs.seva.vbbs004mobile.presentation.screens.osm.OsmPickerScreen
+import io.bbs.seva.vbbs004mobile.presentation.screens.osm.OsmPickerViewModel
+import io.bbs.seva.vbbs004mobile.presentation.screens.shops.ShopsScreen
+import io.bbs.seva.vbbs004mobile.presentation.screens.signup.SignupScreen
+import io.bbs.seva.vbbs004mobile.presentation.screens.weather.WeatherScreen
 import io.bbs.seva.vbbs004mobile.session.SessionManager
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 @Composable
@@ -228,6 +232,24 @@ fun AppRoot(
                     },
                 )
             }
+            entry<Destination.EditProfile> {
+                EditProfileScreen()
+            }
+            entry<Destination.Blogs> {
+                BlogsScreen()
+            }
+            entry<Destination.Shops> {
+                ShopsScreen()
+            }
+            entry<Destination.Chats> {
+                ChatsScreen()
+            }
+            entry<Destination.CurrencyRates> {
+                CurrencyRatesScreen()
+            }
+            entry<Destination.Signup> {
+                SignupScreen()
+            }
         }
     }
 
@@ -362,8 +384,24 @@ fun AppRoot(
                                 Icon(Icons.Default.Menu, "Menu")
                             }
                         }
-
-
+                    },
+                    actions = {
+                        if (backstack.lastOrNull() is Destination.Weather) {
+                            IconButton({
+                                backstack.add(Destination.GeoLocationDest(GeoLocation(0.0, 0.0)))
+                            }) {
+                                Icon(
+                                    getDestinationIcon(
+                                        Destination.GeoLocationDest(
+                                            GeoLocation(
+                                                0.0,
+                                                0.0
+                                            )
+                                        )
+                                    ), "Map"
+                                )
+                            }
+                        }
                     }
                 )
             }

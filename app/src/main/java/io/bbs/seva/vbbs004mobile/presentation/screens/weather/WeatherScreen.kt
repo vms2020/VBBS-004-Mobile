@@ -1,5 +1,5 @@
-package io.bbs.seva.vbbs004mobile.presentation.weather
-// presentation/weather/WeatherScreen.kt
+package io.bbs.seva.vbbs004mobile.presentation.screens.weather
+// presentation/screens/weather/WeatherScreen.kt
 
 import android.util.Log
 import androidx.compose.foundation.background
