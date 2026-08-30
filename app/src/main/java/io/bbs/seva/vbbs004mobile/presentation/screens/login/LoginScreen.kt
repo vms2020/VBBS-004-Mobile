@@ -24,9 +24,10 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
+    modifier: Modifier = Modifier,
     viewModel: LoginViewModel,
     onNavigateToHome: () -> Unit,
-    modifier: Modifier = Modifier
+    onNavigateToSignup: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -52,17 +53,16 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = state !is LoginUiState.Loading,
             label = { Text("Email Address") },
             leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             ),
-            modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            enabled = state !is LoginUiState.Loading,
-
-            )
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -122,7 +122,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(
-            onClick = { /* Proactively setup signup navigation later */ },
+            onClick = onNavigateToSignup,
             enabled = state !is LoginUiState.Loading
         ) {
             Text("Don't have an account? Sign Up")

@@ -4,7 +4,7 @@ package io.bbs.seva.vbbs004mobile.domain.model
 data class User(
     val id: String,
     val email: String,
-    val fullName: String?,
-    val avatarUrl: String?,
-    val age: Int?,
+    val fullName: String? = null,
+    val avatarUrl: String? = null,
+    val age: Int? = null,
 )

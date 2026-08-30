@@ -57,7 +57,7 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.2.0")
 
     implementation(libs.androidx.datastore.preferences)
-    implementation(libs.tink.android)
+    // implementation(libs.tink.android)
 
     implementation(libs.androidx.compose.material.icons.extended)
 

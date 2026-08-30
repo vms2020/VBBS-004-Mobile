@@ -9,6 +9,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.bbs.seva.vbbs004mobile.BuildConfig
+import io.bbs.seva.vbbs004mobile.data.remote.dto.ApiErrorBody
 import io.bbs.seva.vbbs004mobile.data.remote.dto.AuthTokensDto
 import io.bbs.seva.vbbs004mobile.data.repository.AuthRepositoryImpl
 import io.bbs.seva.vbbs004mobile.data.security.AuthTokens
@@ -16,6 +17,8 @@ import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
 import io.bbs.seva.vbbs004mobile.session.SessionManager
 import io.ktor.client.*
 import io.ktor.client.call.body
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
@@ -31,6 +34,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -41,6 +45,8 @@ import kotlinx.coroutines.flow.first
 val apiHost = runCatching {
     Url(BuildConfig.BASE_URL).host
 }.getOrNull() ?: ""
+
+class UnauthorizedException(val serverMessage: String) : Exception(serverMessage)
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -55,6 +61,28 @@ object NetworkModule {
         sessionManager: SessionManager,
     ): HttpClient {
         return HttpClient {
+            expectSuccess = true
+            HttpResponseValidator {
+                handleResponseException { exception ->
+                    if (exception is ClientRequestException &&
+                        (exception.response.status == HttpStatusCode.Unauthorized ||
+                                exception.response.status == HttpStatusCode.BadRequest)
+                    ) {
+                        // Read the raw JSON string safely from the response
+                        val rawJson = exception.response.bodyAsText()
+
+                        // Parse out the explicit backend error message
+                        val serverMessage = try {
+                            Json.decodeFromString<ApiErrorBody>(rawJson).error
+                        } catch (e: Exception) {
+                            "Unknown 40[01] error."
+                        }
+
+                        // Throw your structured exception
+                        throw UnauthorizedException(serverMessage)
+                    }
+                }
+            }
             install(Logging) {
                 //level = LogLevel.BODY
                 level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE
@@ -68,9 +96,11 @@ object NetworkModule {
                     prettyPrint = BuildConfig.DEBUG
                 })
             }
-//            defaultRequest {
+
+            defaultRequest {
+                contentType(ContentType.Application.Json)
 //                header(HttpHeaders.ContentType, ContentType.Application.Json)
-//            }
+            }
 
             install(Auth) {
                 bearer {

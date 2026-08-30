@@ -1,6 +1,7 @@
 package io.bbs.seva.vbbs004mobile.presentation.screens.login
 
 // presentation/login/LoginViewModel.kt
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
 //import kotlinx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import javax.inject.Inject
 import kotlinx.coroutines.launch
+
+private const val TAG = "LoginViewModel"
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -32,6 +35,7 @@ class LoginViewModel @Inject constructor(
                     onLoginSuccess()
                 }
                 .onFailure { error ->
+                    Log.d(TAG, "login: $error")
                     _uiState.value = LoginUiState.Error(error.localizedMessage ?: "Unknown Error")
                 }
         }

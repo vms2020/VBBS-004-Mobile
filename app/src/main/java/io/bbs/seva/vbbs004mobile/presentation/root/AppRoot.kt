@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+//import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -69,6 +70,7 @@ import io.bbs.seva.vbbs004mobile.presentation.screens.osm.OsmPickerScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.osm.OsmPickerViewModel
 import io.bbs.seva.vbbs004mobile.presentation.screens.shops.ShopsScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.signup.SignupScreen
+import io.bbs.seva.vbbs004mobile.presentation.screens.signup.SignupViewModel
 import io.bbs.seva.vbbs004mobile.presentation.screens.weather.WeatherScreen
 import io.bbs.seva.vbbs004mobile.session.SessionManager
 import kotlinx.coroutines.flow.first
@@ -96,7 +98,6 @@ fun getMenuItems(isAuthenticated: Boolean): List<MenuItem> {
 fun AppRoot(
     authRepository: AuthRepository,
     sessionManager: SessionManager,
-//    homeViewModel: HomeViewModel,
     initialAuthState: Boolean,
     locationRepository: GeoLocationRepository,
 ) {
@@ -105,22 +106,6 @@ fun AppRoot(
         authRepository.isAuthenticated.collectAsState(initial = initialAuthState)
     val isAuthenticated = isAuthenticatedState.value
 
-//    if (isAuthenticated == null) {
-//        // Splash screen
-////        Surface(
-////            Modifier.fillMaxSize()
-////        ) {
-////            Box(
-////                Modifier.fillMaxSize(),
-////                contentAlignment = Alignment.Center,
-////            ) {
-////                CircularProgressIndicator()
-////            }
-////        }
-//        return
-//    }
-
-    // 1. Create the permission launcher
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -128,16 +113,12 @@ fun AppRoot(
         val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
 
         if (fineLocationGranted || coarseLocationGranted) {
-            // Permission granted!
-            // You can trigger a ViewModel event here to start fetching location
             Log.i("APPROOT", "Location permission granted!")
         } else {
-            // Permission denied. Handle gracefully (e.g., show a message or use a default location)
             Log.w("APPROOT", "Location permission denied!")
         }
     }
 
-    // 2. Trigger the permission request when user becomes authenticated
     LaunchedEffect(isAuthenticated) {
         if (isAuthenticated) {
             locationPermissionLauncher.launch(
@@ -155,13 +136,13 @@ fun AppRoot(
         if (isAuthenticated) Destination.Home else Destination.Login
     )
     val entryProvider = remember {
-        /* your entryProvider as before */
         entryProvider<NavKey> {
             entry<Destination.Login> {
                 val viewModel: LoginViewModel = hiltViewModel()
                 LoginScreen(
                     viewModel = viewModel,
-                    onNavigateToHome = { backstack.add(Destination.Home) }
+                    onNavigateToHome = { backstack.add(Destination.Home) },
+                    onNavigateToSignup = { backstack.add(Destination.Signup) },
                 )
             }
             entry<Destination.Home> {
@@ -248,7 +229,16 @@ fun AppRoot(
                 CurrencyRatesScreen()
             }
             entry<Destination.Signup> {
-                SignupScreen()
+                val viewModel: SignupViewModel = hiltViewModel()
+                SignupScreen(
+                    viewModel = viewModel,
+                    onNavigateToLogin = {
+                        if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
+                    },
+                    onNavigateToHome = {
+                        backstack.add(Destination.Home)
+                    },
+                )
             }
         }
     }

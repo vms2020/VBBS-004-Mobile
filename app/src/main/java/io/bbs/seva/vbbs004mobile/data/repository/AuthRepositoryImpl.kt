@@ -9,6 +9,9 @@ import io.bbs.seva.vbbs004mobile.data.datastore.model.toDomain
 import io.bbs.seva.vbbs004mobile.data.remote.dto.AuthResponse
 import io.bbs.seva.vbbs004mobile.data.remote.dto.LoginRequest
 import io.bbs.seva.vbbs004mobile.data.remote.dto.MeResponse
+import io.bbs.seva.vbbs004mobile.data.remote.dto.signup.SignUpResponseDto
+import io.bbs.seva.vbbs004mobile.data.remote.dto.signup.SignupRequestDto
+import io.bbs.seva.vbbs004mobile.data.remote.dto.signup.toDomainUser
 import io.bbs.seva.vbbs004mobile.data.security.AuthTokens
 import io.bbs.seva.vbbs004mobile.di.ProfileDataStore
 import io.bbs.seva.vbbs004mobile.di.TokensDataStore
@@ -21,8 +24,10 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -87,17 +92,70 @@ class AuthRepositoryImpl @Inject constructor(
         fullName: String?,
         age: Int?,
         avatarUrl: String?,
-    ): Result<User> {
-        TODO("Implement signup post request similarly")
+    ): Result<User> = runCatching {
+        val response: SignUpResponseDto = httpClient.post("${baseUrl}auth/signup") {
+            contentType(ContentType.Application.Json)
+            setBody(
+                SignupRequestDto(
+                    email = email,
+                    password = password,
+                    fullName = fullName,
+                    avatarUrl = avatarUrl,
+                    age = age
+                )
+            )
+        }.body()
+        if (response.accessToken.isNullOrBlank()) {
+            // Stop here, don't save anything, and throw an error to be caught by runCatching
+            throw Exception("Registration successful! Please check your email to verify your account.")
+        }
+        authDataStore.updateData { currentTokens ->
+            currentTokens.copy(
+                accessToken = response.accessToken,
+                refreshToken = response.refreshToken
+            )
+        }
+        profileDataStore.updateData {
+            it.copy(
+                fullName = response.user?.userMetadata?.fullName,
+                avatarUrl = response.user?.userMetadata?.avatarUrl,
+                age = response.user?.userMetadata?.age,
+                email = response.user?.email,
+                id = response.user?.id,
+            )
+        }
+        response.toDomainUser()
     }
 
     override suspend fun logout(): Result<Unit> = runCatching {
-        val response = httpClient.get("${baseUrl}auth/logout")
+        var r  = authDataStore.data.first()
+        Log.i(TAG, "logout: $r")
+        var response = httpClient.post("${baseUrl}auth/logout") {
+            contentType(ContentType.Application.Json)
+            setBody(
+                mapOf("refresh_token" to r.refreshToken)
+            )
+        }
         Log.i(
             TAG,
             "logout: ${response.status.value} ${response.status.description} " +
                     "${response.status}"
         )
+        if(response.status == HttpStatusCode.Unauthorized){
+            r  = authDataStore.data.first()
+            Log.i(TAG, "second logout: $r")
+            response = httpClient.post("${baseUrl}auth/logout") {
+                setBody(
+                    mapOf("refresh_token" to r.refreshToken)
+                )
+            }
+            Log.i(
+                TAG,
+                "second logout: ${response.status.value} ${response.status.description} " +
+                        "${response.status}"
+            )
+        }
+
         authDataStore.updateData { AuthTokens() }
         profileDataStore.updateData { UserProfile() }
         sessionManager.emitLogout()
