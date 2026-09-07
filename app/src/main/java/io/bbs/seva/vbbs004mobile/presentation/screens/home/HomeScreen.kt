@@ -48,6 +48,11 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            state.error?.let {
+                Text(it, color =  MaterialTheme.colorScheme.error)
+            }
+
             if(state.user?.avatarUrl != null &&
                 state.user?.avatarUrl?.isNotBlank()== true) {
                 AsyncImage(

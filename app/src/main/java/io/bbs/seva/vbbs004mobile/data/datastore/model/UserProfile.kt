@@ -18,7 +18,7 @@ fun UserProfile.toDomain(): User {
     return User(
         id = this.id ?: "",
         email = this.email ?: "",
-        fullName = this.fullName ?: "Unknown User",
+        fullName = this.fullName,
         avatarUrl = this.avatarUrl,
         age = this.age
     )

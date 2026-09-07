@@ -24,15 +24,18 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _isRefreshing = MutableStateFlow(false)
+    private val _error = MutableStateFlow<String?>(null)
+
     // Combine local DataStore stream with network refreshing indicators
     val uiState: StateFlow<HomeUiState> = combine(
         homeUseCase.userProfile,
-        _isRefreshing
-    ) { user, refreshing ->
+        _isRefreshing,
+        _error,
+    ) { user, refreshing, errorMessage ->
         HomeUiState(
             user = user,
             isRefreshing = refreshing,
-            error = null
+            error = errorMessage,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -43,9 +46,16 @@ class HomeViewModel @Inject constructor(
     // Triggered on app launch or when pulling to refresh
     fun refreshProfile() {
         viewModelScope.launch {
+            _error.value = null
             _isRefreshing.value = true
             homeUseCase.refreshProfile()
-                .onFailure { /* Optionally emit error to your state here */ }
+                .onFailure { exception ->
+                    if (exception is java.net.ConnectException) {
+                        _error.value="Connection error"
+                    } else {
+                        _error.value = exception.message ?: "An unknown error occurred"
+                    }
+                }
             _isRefreshing.value = false
         }
     }

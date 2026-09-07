@@ -1,6 +1,7 @@
 package io.bbs.seva.vbbs004mobile.domain.repository
 // domain/repository/AuthRepository.kt
 
+import io.bbs.seva.vbbs004mobile.domain.model.AvaPic
 import io.bbs.seva.vbbs004mobile.domain.model.User
 import kotlinx.coroutines.flow.Flow
 
@@ -12,4 +13,7 @@ interface AuthRepository {
     suspend fun logout(): Result<Unit>
     suspend fun updateProfile(fullName: String?, age: Int?, avatarUrl: String?): Result<User>
     suspend fun me(): Result<User>
+    suspend fun fetchAvaPics(): Result<List<AvaPic>>
+    suspend fun deletePicture(storagePath: String): Result<Boolean>
+    suspend fun uploadPic(picArray: ByteArray): Result<String>
 }
