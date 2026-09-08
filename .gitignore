@@ -18,3 +18,4 @@ local.properties
 /mybin/GOOGLE_AI_MODE_CHAT.md
 /core/domain/build/
 /core/common/build/
+/core/datastore/build/

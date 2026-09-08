@@ -1,5 +1,5 @@
 package io.bbs.seva.vbbs004mobile.data.security
-// data/security/CryptoManagerTink.kt
+// data/security/CryptoManager.kt
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties

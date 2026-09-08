@@ -6,9 +6,9 @@ plugins {
 group = "io.bbs.seva.vbbs004mobile.buildlogic"
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+//    toolchain {
+//        languageVersion = JavaLanguageVersion.of(21)
+//    }
 }
 //java {
 //    sourceCompatibility = JavaVersion.VERSION_17

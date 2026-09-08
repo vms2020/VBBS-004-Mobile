@@ -63,6 +63,7 @@ import java.io.InputStream
 import android.content.Context
 import android.provider.OpenableColumns
 import android.util.Log
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -229,8 +230,20 @@ fun EditProfileScreen(
 
         // --- 1. HORIZONTAL AVATAR LIST ---
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("Select or Upload Avatar", style = MaterialTheme.typography.titleMedium)
-
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("Select or Upload Avatar", style = MaterialTheme.typography.titleMedium)
+                IconButton(
+                    {
+                        viewModel.fetchAvatarPictures()
+                    }
+                ) {
+                    Icon(Icons.Default.Refresh,"Refresh")
+                }
+            }
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(horizontal = 4.dp),
