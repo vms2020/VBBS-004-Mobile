@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -5,14 +7,14 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
 }
-val localProperties = org.jetbrains.kotlin.konan.properties.Properties().apply {
-    val propertiesFile = rootProject.file("local.properties")
-    if (propertiesFile.exists()) {
-        propertiesFile.inputStream().use { load(it) }
-    }
-}
-val baseUrl = localProperties.getProperty("BASE_URL") ?: "\"\""
-
+//val localProperties = org.jetbrains.kotlin.konan.properties.Properties().apply {
+//    val propertiesFile = rootProject.file("local.properties")
+//    if (propertiesFile.exists()) {
+//        propertiesFile.inputStream().use { load(it) }
+//    }
+//}
+//val baseUrl = localProperties.getProperty("BASE_URL") ?: "\"\""
+//
 
 android {
     namespace = "io.bbs.seva.vbbs004mobile"
@@ -28,6 +30,17 @@ android {
         versionName = "alpha-v0.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        val localProperties = Properties().apply {
+            val localPropertiesFile = rootProject.file("local.properties")
+            if (localPropertiesFile.exists()) {
+                localPropertiesFile.inputStream().use { load(it) }
+            }
+        }
+        val baseUrl = localProperties.getProperty("BASE_URL")
+        if (baseUrl.isNullOrEmpty()) {
+            error("❌ BUILD FAILED: 'BASE_URL' is missing or empty in local.properties. Please add 'BASE_URL=\"https://your-api.com\"' to your local.properties file.")
+        }
+        //buildConfigField("String", "BASE_URL", "\"$baseUrlProperty\"")
         buildConfigField("String", "BASE_URL", baseUrl)
 
     }

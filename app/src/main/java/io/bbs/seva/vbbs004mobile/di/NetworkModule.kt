@@ -42,10 +42,10 @@ import io.ktor.http.Url
 import io.ktor.http.contentType
 import kotlinx.coroutines.flow.first
 
-val apiHost = runCatching {
-    Url(BuildConfig.BASE_URL).host
-}.getOrNull() ?: ""
-
+//val apiHost = runCatching {
+//    Url(BuildConfig.BASE_URL).host
+//}.getOrNull() ?: ""
+val apiHost = Url(BuildConfig.BASE_URL).host
 class UnauthorizedException(val serverMessage: String) : Exception(serverMessage)
 
 @Module
@@ -91,7 +91,7 @@ object NetworkModule {
             install(ContentNegotiation) {
                 json(Json {
                     ignoreUnknownKeys = true
-                    prettyPrint = true
+                    // prettyPrint = true
                     isLenient = true
                     prettyPrint = BuildConfig.DEBUG
                 })
