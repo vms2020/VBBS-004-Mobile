@@ -14,3 +14,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/app/release/
+/mybin/GOOGLE_AI_MODE_CHAT.md
