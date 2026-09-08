@@ -19,7 +19,7 @@ sealed class Destination : NavKey {
     data object Weather : Destination()
 
     @Serializable
-    class GeoLocationDest(val geoLocation: GeoLocation): Destination()
+    class GeoLocationDest(val lat: Double, val lon: Double): Destination()
 
     // New
     @Serializable
@@ -93,7 +93,7 @@ sealed class Destination : NavKey {
                 .apply {
                     // Add a default GeoLocationDest for the menu
                     // (You will pass the real GeoLocation when navigating)
-                    add(GeoLocationDest(GeoLocation(0.0, 0.0)))
+                    add(GeoLocationDest(0.0, 0.0))
                 }
         }
 

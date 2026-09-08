@@ -378,16 +378,11 @@ fun AppRoot(
                     actions = {
                         if (backstack.lastOrNull() is Destination.Weather) {
                             IconButton({
-                                backstack.add(Destination.GeoLocationDest(GeoLocation(0.0, 0.0)))
+                                backstack.add(Destination.GeoLocationDest(0.0, 0.0))
                             }) {
                                 Icon(
                                     getDestinationIcon(
-                                        Destination.GeoLocationDest(
-                                            GeoLocation(
-                                                0.0,
-                                                0.0
-                                            )
-                                        )
+                                        Destination.GeoLocationDest(0.0, 0.0)
                                     ), "Map"
                                 )
                             }

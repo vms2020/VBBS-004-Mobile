@@ -207,7 +207,7 @@ fun CurrentWeatherHeaderCard(weather: Weather, modifier: Modifier = Modifier) {
 
             if(weather.cityName!=null){
                 Text(
-                    text = weather.cityName,
+                    text = weather.cityName!!,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                 )

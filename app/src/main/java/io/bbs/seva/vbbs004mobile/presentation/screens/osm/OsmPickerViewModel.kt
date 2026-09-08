@@ -24,7 +24,7 @@ class OsmPickerViewModel @Inject constructor(
         viewModelScope.launch {
             val location = locationTracker.getCurrentLocation()
             if (location != null) {
-                onLocationFetched(location.latitude, location.longitude)
+                onLocationFetched(location.lat, location.lon)
             } else {
                 onLocationFetched(
                     LocationConstants.DEFAULT_LOCATION.lat, //55.75,
