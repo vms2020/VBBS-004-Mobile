@@ -6,9 +6,14 @@ plugins {
 group = "io.bbs.seva.vbbs004mobile.buildlogic"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
+//java {
+//    sourceCompatibility = JavaVersion.VERSION_17
+//    targetCompatibility = JavaVersion.VERSION_17
+//}
 
 dependencies {
     compileOnly(libs.android.gradlePlugin)

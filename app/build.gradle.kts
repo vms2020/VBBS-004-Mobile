@@ -65,9 +65,10 @@ android {
 
 dependencies {
     implementation(project(":core:domain"))
+    implementation(project(":core:common"))
     coreLibraryDesugaring(libs.desugar.jdk.libs)
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
-    implementation("androidx.core:core-splashscreen:1.2.0")
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.androidx.core.splashscreen)
 
     implementation(libs.androidx.datastore.preferences)
     // implementation(libs.tink.android)

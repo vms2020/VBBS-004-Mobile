@@ -26,3 +26,4 @@ dependencyResolutionManagement {
 rootProject.name = "Vbbs004 Mobile"
 include(":app")
 include(":core:domain")
+include(":core:common")

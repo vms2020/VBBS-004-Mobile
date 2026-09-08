@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeviceThermostat
 import androidx.compose.material3.Card
@@ -144,7 +146,12 @@ fun WeatherScreen(
         when {
             // Error View
             state.error != null -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
                         text = "Error: ${state.error}",
                         color = MaterialTheme.colorScheme.error,
@@ -205,7 +212,7 @@ fun CurrentWeatherHeaderCard(weather: Weather, modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            if(weather.cityName!=null){
+            if (weather.cityName != null) {
                 Text(
                     text = weather.cityName!!,
                     style = MaterialTheme.typography.labelLarge,
@@ -291,10 +298,10 @@ fun ForecastItemRow(weather: Weather, modifier: Modifier = Modifier) {
 
             if (weather.icon != null) {
                 Box(
-                   modifier = Modifier.size(48.dp)
-                       .clip(RoundedCornerShape(8.dp))
-                       .background(Color.LightGray)
-                    ,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.LightGray),
                 ) {
                     AsyncImage(
                         model = weather.icon,
@@ -307,7 +314,9 @@ fun ForecastItemRow(weather: Weather, modifier: Modifier = Modifier) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(start = 8.dp).weight(.5f)
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .weight(.5f)
             ) {
                 Icon(
                     imageVector = Icons.Filled.DeviceThermostat,
