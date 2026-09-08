@@ -64,6 +64,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:datastore"))
     implementation(project(":core:domain"))
     implementation(project(":core:common"))
     coreLibraryDesugaring(libs.desugar.jdk.libs)

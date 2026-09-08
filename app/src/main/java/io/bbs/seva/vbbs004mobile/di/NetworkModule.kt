@@ -109,7 +109,7 @@ object NetworkModule {
                         val tokens = authDataStore.data.first()
                         Log.i(TAG, "provideHttpClient: token = $tokens")
                         if (tokens.accessToken != null && tokens.refreshToken != null) {
-                            BearerTokens(tokens.accessToken, tokens.refreshToken)
+                            BearerTokens(tokens.accessToken!!, tokens.refreshToken)
                         } else {
                             null
                         }
