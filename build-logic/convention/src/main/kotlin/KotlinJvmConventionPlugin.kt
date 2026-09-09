@@ -12,15 +12,15 @@ class KotlinJvmConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         pluginManager.apply("org.jetbrains.kotlin.jvm")
 
-        extensions.configure<JavaPluginExtension> {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
-        }
-
-        tasks.withType<KotlinJvmCompile>().configureEach {
-            compilerOptions {
-                jvmTarget.set(JvmTarget.JVM_17)
-            }
-        }
+//        extensions.configure<JavaPluginExtension> {
+//            sourceCompatibility = JavaVersion.VERSION_17
+//            targetCompatibility = JavaVersion.VERSION_17
+//        }
+//
+//        tasks.withType<KotlinJvmCompile>().configureEach {
+//            compilerOptions {
+//                jvmTarget.set(JvmTarget.JVM_17)
+//            }
+//        }
     }
 }

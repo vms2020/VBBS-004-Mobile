@@ -11,6 +11,6 @@ dependencies {
     implementation(project(":core:domain"))
     api(libs.androidx.datastore.preferences)   // api: consumers declare DataStore<T> params
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+//    implementation(libs.hilt.android)
+//    ksp(libs.hilt.compiler)
 }

@@ -24,7 +24,9 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Vbbs004 Mobile"
+
 include(":app")
+
 include(":core:domain")
 include(":core:common")
 include(":core:datastore")
@@ -32,3 +34,5 @@ include(":core:network")
 include(":core:data")
 include(":core:designsystem")
 include(":core:navigation")
+
+include(":feature:auth")

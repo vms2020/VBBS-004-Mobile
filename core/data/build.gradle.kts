@@ -16,6 +16,6 @@ dependencies {
     implementation(libs.ktor.client.core)       // AuthRepositoryImpl builds ktor requests
     implementation(libs.osmdroid.android)       // GeoLocationRepositoryImpl
     implementation(libs.coil.compose)           // if picture/avatar code imports it — drop if not
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+//    implementation(libs.hilt.android)
+//    ksp(libs.hilt.compiler)
 }
