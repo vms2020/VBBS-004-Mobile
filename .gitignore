@@ -20,3 +20,4 @@ local.properties
 /core/common/build/
 /core/datastore/build/
 /core/network/build/
+/core/data/build/

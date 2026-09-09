@@ -3,7 +3,8 @@ package io.bbs.seva.vbbs004mobile.data.repository
 
 import android.util.Log
 import androidx.datastore.core.DataStore
-import io.bbs.seva.vbbs004mobile.BuildConfig
+//import io.bbs.seva.vbbs004mobile.BuildConfig
+import io.bbs.seva.vbbs004mobile.core.network.BuildConfig
 import io.bbs.seva.vbbs004mobile.data.datastore.model.UserProfile
 import io.bbs.seva.vbbs004mobile.data.datastore.model.toDomain
 import io.bbs.seva.vbbs004mobile.data.remote.dto.AuthResponse

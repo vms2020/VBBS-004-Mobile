@@ -30,18 +30,18 @@ android {
         versionName = "alpha-v0.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        val localProperties = Properties().apply {
-            val localPropertiesFile = rootProject.file("local.properties")
-            if (localPropertiesFile.exists()) {
-                localPropertiesFile.inputStream().use { load(it) }
-            }
-        }
-        val baseUrl = localProperties.getProperty("BASE_URL")
-        if (baseUrl.isNullOrEmpty()) {
-            error("❌ BUILD FAILED: 'BASE_URL' is missing or empty in local.properties. Please add 'BASE_URL=\"https://your-api.com\"' to your local.properties file.")
-        }
+//        val localProperties = Properties().apply {
+//            val localPropertiesFile = rootProject.file("local.properties")
+//            if (localPropertiesFile.exists()) {
+//                localPropertiesFile.inputStream().use { load(it) }
+//            }
+//        }
+//        val baseUrl = localProperties.getProperty("BASE_URL")
+//        if (baseUrl.isNullOrEmpty()) {
+//            error("❌ BUILD FAILED: 'BASE_URL' is missing or empty in local.properties. Please add 'BASE_URL=\"https://your-api.com\"' to your local.properties file.")
+//        }
         //buildConfigField("String", "BASE_URL", "\"$baseUrlProperty\"")
-        buildConfigField("String", "BASE_URL", baseUrl)
+//        buildConfigField("String", "BASE_URL", baseUrl)
 
     }
 
@@ -65,9 +65,10 @@ android {
 
 dependencies {
     implementation(project(":core:datastore"))
-    implementation(project(":core:domain"))
+    //implementation(project(":core:domain"))
     implementation(project(":core:common"))
-    implementation(project(":core:network"))
+    //implementation(project(":core:network"))
+    implementation(project(":core:data"))
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 

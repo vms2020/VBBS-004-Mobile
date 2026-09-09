@@ -1,7 +1,8 @@
 package io.bbs.seva.vbbs004mobile.data.repository
 
 // data/repository/WeatherRepositoryImpl.kt
-import io.bbs.seva.vbbs004mobile.BuildConfig
+//import io.bbs.seva.vbbs004mobile.BuildConfig
+import io.bbs.seva.vbbs004mobile.core.network.BuildConfig
 import io.bbs.seva.vbbs004mobile.data.remote.dto.weather.OpenWeatherMapWeatherDto
 import io.bbs.seva.vbbs004mobile.data.remote.dto.weather.forecast.OpenWeatherMapForecastDto
 import io.bbs.seva.vbbs004mobile.data.remote.dto.weather.forecast.toDomain
