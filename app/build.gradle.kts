@@ -67,7 +67,10 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:domain"))
     implementation(project(":core:common"))
+    implementation(project(":core:network"))
+
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.core.splashscreen)
 

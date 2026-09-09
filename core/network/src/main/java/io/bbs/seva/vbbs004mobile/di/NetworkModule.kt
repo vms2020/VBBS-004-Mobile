@@ -8,10 +8,12 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import io.bbs.seva.vbbs004mobile.BuildConfig
+
+// was: import io.bbs.seva.vbbs004mobile.BuildConfig
+import io.bbs.seva.vbbs004mobile.core.network.BuildConfig
 import io.bbs.seva.vbbs004mobile.data.remote.dto.ApiErrorBody
 import io.bbs.seva.vbbs004mobile.data.remote.dto.AuthTokensDto
-import io.bbs.seva.vbbs004mobile.data.repository.AuthRepositoryImpl
+// import io.bbs.seva.vbbs004mobile.data.repository.AuthRepositoryImpl
 import io.bbs.seva.vbbs004mobile.data.security.AuthTokens
 import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
 import io.bbs.seva.vbbs004mobile.session.SessionManager

@@ -57,4 +57,17 @@ object CryptoManager {
         val encryptedData = inputStream.readBytes()
         return cipher.doFinal(encryptedData)
     }
+
+    ///////////////////// z variant
+//    fun decrypt(inputStream: InputStream): ByteArray {
+//        DataInputStream(inputStream).use { dis ->
+//            val ivSize = dis.read()
+//            require(ivSize >= 0) { "Corrupted input: empty or truncated stream" }
+//            val iv = ByteArray(ivSize)
+//            dis.readFully(iv)          // guaranteed to fill or throw EOFException
+//            val cipher = Cipher.getInstance(TRANSFORMATION)
+//            cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), GCMParameterSpec(128, iv))
+//            return cipher.doFinal(dis.readBytes())
+//        }
+//    }
 }
