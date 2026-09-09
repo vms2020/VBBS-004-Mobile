@@ -2,7 +2,6 @@ package io.bbs.seva.vbbs004mobile.presentation.navigation
 // presentation/navigation/Destination.kt
 
 import androidx.navigation3.runtime.NavKey
-import io.bbs.seva.vbbs004mobile.domain.model.GeoLocation
 import kotlinx.serialization.Serializable
 
 

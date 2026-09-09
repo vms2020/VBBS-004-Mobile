@@ -61,7 +61,7 @@ import io.bbs.seva.vbbs004mobile.presentation.screens.login.LoginScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.login.LoginViewModel
 import io.bbs.seva.vbbs004mobile.presentation.menu.MenuItem
 import io.bbs.seva.vbbs004mobile.presentation.navigation.Destination
-import io.bbs.seva.vbbs004mobile.presentation.navigation.getDestinationIcon
+import io.bbs.seva.vbbs004mobile.presentation.menu.getDestinationIcon
 import io.bbs.seva.vbbs004mobile.presentation.screens.blogs.BlogsScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.chats.ChatsScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.currency_rates.CurrencyRatesScreen

@@ -21,3 +21,6 @@ local.properties
 /core/datastore/build/
 /core/network/build/
 /core/data/build/
+/core/navigation/build/
+/core/designsystem/build/
+

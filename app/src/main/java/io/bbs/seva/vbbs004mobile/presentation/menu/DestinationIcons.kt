@@ -1,4 +1,4 @@
-package io.bbs.seva.vbbs004mobile.presentation.navigation
+package io.bbs.seva.vbbs004mobile.presentation.menu
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Article
@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.ui.graphics.vector.ImageVector
+import io.bbs.seva.vbbs004mobile.presentation.navigation.Destination
 
 fun getDestinationIcon(destination: Destination): ImageVector {
     return when (destination) {

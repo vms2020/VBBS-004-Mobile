@@ -69,6 +69,8 @@ dependencies {
     implementation(project(":core:common"))
     //implementation(project(":core:network"))
     implementation(project(":core:data"))
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:navigation"))
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
@@ -124,5 +126,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation(kotlin("reflect"))
+    //implementation(kotlin("reflect"))
 }
