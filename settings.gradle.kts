@@ -37,3 +37,4 @@ include(":core:navigation")
 
 include(":feature:auth")
 include(":feature:weather")
+include(":feature:home")
