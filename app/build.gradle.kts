@@ -75,6 +75,7 @@ dependencies {
     implementation(project(":feature:auth"))
     implementation(project(":feature:weather"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:profile"))
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
