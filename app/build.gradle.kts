@@ -72,6 +72,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:navigation"))
     implementation(project(":feature:auth"))
+    implementation(project(":feature:weather"))
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 

@@ -36,3 +36,4 @@ include(":core:designsystem")
 include(":core:navigation")
 
 include(":feature:auth")
+include(":feature:weather")

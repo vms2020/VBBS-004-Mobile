@@ -14,16 +14,25 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
 
             val libs = the<VersionCatalogsExtension>().named("libs")
-            dependencies.add("implementation", libs.findLibrary("kotlinx-serialization-json").get().get())
+            dependencies.add(
+                "implementation",
+                libs.findLibrary("kotlinx-serialization-json").get().get()
+            )
 //            dependencies.add("ksp", libs.findLibrary("hilt-compiler").get().get())
-
+            dependencies.add(
+                "coreLibraryDesugaring",
+                libs.findLibrary("desugar-jdk-libs")
+                    .orElseThrow { IllegalStateException("Catalog alias 'desugar_jdk_libs' not found") }
+                    .get()   // ← same pattern as your hilt plugin
+            )
             extensions.configure<LibraryExtension> {
                 compileSdk { version = release(37) }
                 defaultConfig { minSdk = 24 }
-//            compileOptions {
+                compileOptions {
 //                sourceCompatibility = JavaVersion.VERSION_17
 //                targetCompatibility = JavaVersion.VERSION_17
-//            }
+                    isCoreLibraryDesugaringEnabled = true
+                }
             }
         }
     }
