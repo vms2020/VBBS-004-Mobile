@@ -4,10 +4,11 @@ package io.bbs.seva.vbbs004mobile.domain.repository
 import io.bbs.seva.vbbs004mobile.domain.model.AvaPic
 import io.bbs.seva.vbbs004mobile.domain.model.User
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface AuthRepository {
     val isAuthenticated: Flow<Boolean>
-    val userProfile: Flow<User?>
+    val userProfile: StateFlow<User?>
     suspend fun login(email: String, password: String): Result<User>
     suspend fun signup(email: String, password: String, fullName: String?, age: Int?, avatarUrl: String?): Result<User>
     suspend fun logout(): Result<Unit>

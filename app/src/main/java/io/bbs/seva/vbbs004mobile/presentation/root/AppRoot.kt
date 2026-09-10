@@ -37,7 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+//import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -46,15 +46,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 //import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import io.bbs.seva.vbbs004mobile.domain.constant.LocationConstants
-import io.bbs.seva.vbbs004mobile.domain.model.GeoLocation
-import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
-import io.bbs.seva.vbbs004mobile.domain.repository.GeoLocationRepository
+//import io.bbs.seva.vbbs004mobile.domain.model.GeoLocation
+//import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
+//import io.bbs.seva.vbbs004mobile.domain.repository.GeoLocationRepository
 import io.bbs.seva.vbbs004mobile.presentation.screens.home.HomeScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.home.HomeViewModel
 import io.bbs.seva.vbbs004mobile.presentation.screens.login.LoginScreen
@@ -72,8 +73,8 @@ import io.bbs.seva.vbbs004mobile.presentation.screens.shops.ShopsScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.signup.SignupScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.signup.SignupViewModel
 import io.bbs.seva.vbbs004mobile.presentation.screens.weather.WeatherScreen
-import io.bbs.seva.vbbs004mobile.session.SessionManager
-import kotlinx.coroutines.flow.first
+//import io.bbs.seva.vbbs004mobile.session.SessionManager
+//import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 
@@ -96,16 +97,18 @@ fun getMenuItems(isAuthenticated: Boolean): List<MenuItem> {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppRoot(
-    authRepository: AuthRepository,
-    sessionManager: SessionManager,
+    appViewModel: AppViewModel = hiltViewModel(),
+    //authRepository: AuthRepository,
+//    sessionManager: SessionManager,
     initialAuthState: Boolean,
-    locationRepository: GeoLocationRepository,
+//    locationRepository: GeoLocationRepository,
 ) {
     val activity = LocalActivity.current
-    val isAuthenticatedState =
-        authRepository.isAuthenticated.collectAsState(initial = initialAuthState)
-    val isAuthenticated = isAuthenticatedState.value
-
+//    val isAuthenticatedState =
+//        authRepository.isAuthenticated.collectAsState(initial = initialAuthState)
+//    val isAuthenticated = isAuthenticatedState.value
+    val isAuthenticated = appViewModel.isAuthenticated.collectAsState().value
+        ?: initialAuthState
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -165,23 +168,23 @@ fun AppRoot(
             }
             entry<Destination.GeoLocationDest> {
                 val viewModel: OsmPickerViewModel = hiltViewModel()
-
-                var isLoading by remember { mutableStateOf(true) }
-                var savedLocation by remember { mutableStateOf<GeoLocation?>(null) }
+                val state by viewModel.uiState.collectAsStateWithLifecycle()
+                //var isLoading by remember { mutableStateOf(true) }
+                //var savedLocation by remember { mutableStateOf<GeoLocation?>(null) }
 //                val savedLocation = locationRepository.savedGeoLocation.collectAsState(
 //                    initial = null
 //                )
 
-                LaunchedEffect(Unit) {
-                    // .first() suspends until DataStore emits the first value.
-                    // If DataStore has no saved location, this will return null.
-                    savedLocation = locationRepository.savedGeoLocation.first()
-                    isLoading = false // DataStore is done loading!
-                }
+//                LaunchedEffect(Unit) {
+//                    // .first() suspends until DataStore emits the first value.
+//                    // If DataStore has no saved location, this will return null.
+//                    savedLocation = locationRepository.savedGeoLocation.first()
+//                    isLoading = false // DataStore is done loading!
+//                }
 
                 // 2. Wait for DataStore to load
                 //if (savedLocation.value == null) {
-                if (isLoading) {
+                if (state.isLoading) {
                     // Show a loading spinner while DataStore reads the file from disk
                     Surface(
                         modifier = Modifier.fillMaxSize(),
@@ -197,13 +200,14 @@ fun AppRoot(
                 }
 
                 OsmPickerScreen(
-                    initialLatitude = savedLocation?.lat ?: LocationConstants.DEFAULT_LOCATION.lat,
-                    initialLongitude = savedLocation?.lon ?: LocationConstants.DEFAULT_LOCATION.lon,
-                    onForceGpsRequest = { callback ->
-                        viewModel.getFreshGpsLocation { lat, lon ->
-                            callback(lat, lon)
-                        }
-                    },
+                    initialLatitude = state.saved?.lat ?: LocationConstants.DEFAULT_LOCATION.lat,
+                    initialLongitude = state.saved?.lon ?: LocationConstants.DEFAULT_LOCATION.lon,
+                    onForceGpsRequest = viewModel::getFreshGpsLocation,
+//                        { callback ->
+//                        viewModel.getFreshGpsLocation { lat, lon ->
+//                            callback(lat, lon)
+//                        }
+//                    },
                     onLocationSelected = { a, b ->
                         viewModel.saveLocation(a, b)
                         if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
@@ -244,14 +248,23 @@ fun AppRoot(
     }
 
     LaunchedEffect(Unit) {
-        sessionManager.logoutEvents.collect {
-            Log.i(
-                "APPROOT",
-                "!!!!!!!!!!!!!!!!!!!!!!!!\nAppRoot: backstack.add(Destination.Login)\n!!!!!!!!!!!!!!"
-            )
+
+        appViewModel.logoutEvents.collect {
             backstack.removeAll { true }
             backstack.add(Destination.Login)
         }
+
+//        appViewModel.logoutEvents.collect {
+//        //    backstack.clear()   // or however your nav resets to login — reuse the exact logic
+//        //}
+//        //sessionManager.logoutEvents.collect {
+//            Log.i(
+//                "APPROOT",
+//                "!!!!!!!!!!!!!!!!!!!!!!!!\nAppRoot: backstack.add(Destination.Login)\n!!!!!!!!!!!!!!"
+//            )
+//            backstack.removeAll { true }
+//            backstack.add(Destination.Login)
+//        }
     }
 
     ModalNavigationDrawer(
@@ -312,11 +325,12 @@ fun AppRoot(
                             if (item.destination == Destination.Logout) {
                                 // Perform logout (call authRepository.logout(), etc.)
                                 // You can also emit a logout event
-                                scope.launch {
-                                    authRepository.logout()
-                                    // The isAuthenticated state will become false,
-                                    // and the LaunchedEffect will reset backstack
-                                }
+                                appViewModel.logout()
+//                                scope.launch {
+//                                    authRepository.logout()
+//                                    // The isAuthenticated state will become false,
+//                                    // and the LaunchedEffect will reset backstack
+//                                }
                             } else {
                                 // For simplicity, add to backstack
                                 backstack.add(item.destination)

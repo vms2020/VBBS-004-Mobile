@@ -1,6 +1,7 @@
 package io.bbs.seva.vbbs004mobile
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -8,13 +9,16 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
-import io.bbs.seva.vbbs004mobile.domain.repository.GeoLocationRepository
+//import io.bbs.seva.vbbs004mobile.domain.repository.GeoLocationRepository
 import io.bbs.seva.vbbs004mobile.presentation.root.AppRoot
-import io.bbs.seva.vbbs004mobile.session.SessionManager
+//import io.bbs.seva.vbbs004mobile.session.SessionManager
 import io.bbs.seva.vbbs004mobile.ui.theme.Vbbs004MobileTheme
+//import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+private const val TAG = "MainActivity"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -22,11 +26,11 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var authRepository: AuthRepository
 
-    @Inject
-    lateinit var sessionManager: SessionManager
+//    @Inject
+//    lateinit var sessionManager: SessionManager
 
-    @Inject
-    lateinit var gelLocationRepository: GeoLocationRepository
+    //@Inject
+    //lateinit var gelLocationRepository: GeoLocationRepository
 
     //@Inject
     //lateinit var profileDataStore: ProfileDataStore
@@ -46,18 +50,21 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
 //            // .first() suspends until the Flow emits its first item
 //            // We wait until it emits something that is NOT null
-            initialAuthState = authRepository.isAuthenticated.first { it != null }
-            authRepository.userProfile.first()
+            initialAuthState = authRepository.isAuthenticated.first() // { it != null }
+            Log.i(TAG, "!!!!!!!!!!!!! onCreate: initialAuthState=$initialAuthState")
+            val a = authRepository.userProfile.first()
+            Log.i(TAG, "!!!!!!!!!!!!! onCreate: authRepository=$a")
+            //authRepository.userProfile.filterNotNull().first()
 //            // Once we get a non-null value, update the flag
             isReady = true
             setContent {
                 Vbbs004MobileTheme {
                     AppRoot(
-                        authRepository = authRepository,
-                        sessionManager = sessionManager,
-                        //                homeViewModel = viewModel,
+                        //authRepository = authRepository,
+                        //sessionManager = sessionManager,
+                        //           homeViewModel = viewModel,
                         initialAuthState = initialAuthState,
-                        locationRepository = gelLocationRepository,
+                        //locationRepository = gelLocationRepository,
                     )
                 }
             }

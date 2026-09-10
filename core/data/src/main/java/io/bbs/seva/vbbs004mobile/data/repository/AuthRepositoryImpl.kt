@@ -18,6 +18,7 @@ import io.bbs.seva.vbbs004mobile.data.remote.dto.signup.SignUpResponseDto
 import io.bbs.seva.vbbs004mobile.data.remote.dto.signup.SignupRequestDto
 import io.bbs.seva.vbbs004mobile.data.remote.dto.signup.toDomainUser
 import io.bbs.seva.vbbs004mobile.data.security.AuthTokens
+import io.bbs.seva.vbbs004mobile.di.ApplicationScope
 import io.bbs.seva.vbbs004mobile.di.ProfileDataStore
 import io.bbs.seva.vbbs004mobile.di.TokensDataStore
 import io.bbs.seva.vbbs004mobile.domain.model.AvaPic
@@ -39,9 +40,13 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
 import javax.inject.Inject
 
@@ -52,6 +57,7 @@ class AuthRepositoryImpl @Inject constructor(
     @TokensDataStore private val authDataStore: DataStore<AuthTokens>,
     @ProfileDataStore private val profileDataStore: DataStore<UserProfile>,
     val sessionManager: SessionManager,
+    @ApplicationScope appScope: CoroutineScope
 ) : AuthRepository {
 
     private val baseUrl = BuildConfig.BASE_URL
@@ -61,10 +67,16 @@ class AuthRepositoryImpl @Inject constructor(
             !tokens.accessToken.isNullOrBlank() && !tokens.refreshToken.isNullOrBlank()
         }
 
-    override val userProfile: Flow<User?> = profileDataStore.data.map { profile ->
-        // Return null if the user isn't logged in yet (no valid ID saved)
-        if (profile.id.isNullOrBlank()) null else profile.toDomain()
-    }
+    //override val userProfile: Flow<User?> = profileDataStore.data.map { profile ->
+    //    // Return null if the user isn't logged in yet (no valid ID saved)
+    //    if (profile.id.isNullOrBlank()) null else profile.toDomain()
+    //}
+
+    // AuthRepositoryImpl (:core:data) — needs an injected app-scope CoroutineScope
+    override val userProfile: StateFlow<User?> = profileDataStore.data
+        .map { if (it.id.isNullOrBlank()) null else it.toDomain() }
+        .stateIn(appScope, SharingStarted.Eagerly, null)
+    
 
     override suspend fun login(email: String, password: String): Result<User> = runCatching {
         val response: AuthResponse = httpClient.post("${baseUrl}auth/login") {

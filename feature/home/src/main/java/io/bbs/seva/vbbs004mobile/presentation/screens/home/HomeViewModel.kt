@@ -40,7 +40,7 @@ class HomeViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = HomeUiState()
+        initialValue = HomeUiState(user = homeUseCase.userProfile.value)
     )
 
     // Triggered on app launch or when pulling to refresh

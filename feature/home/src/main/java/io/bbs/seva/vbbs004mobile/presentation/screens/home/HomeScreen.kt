@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,7 +32,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 //    onBack: () -> Unit,
 //    onNavigateToWeather: () -> Unit,
-    viewModel: HomeViewModel,
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -50,17 +51,18 @@ fun HomeScreen(
         ) {
 
             state.error?.let {
-                Text(it, color =  MaterialTheme.colorScheme.error)
+                Text(it, color = MaterialTheme.colorScheme.error)
             }
 
-            if(state.user?.avatarUrl != null &&
-                state.user?.avatarUrl?.isNotBlank()== true) {
+            if (state.user?.avatarUrl != null &&
+                state.user?.avatarUrl?.isNotBlank() == true
+            ) {
                 AsyncImage(
                     state.user?.avatarUrl,
                     state.user?.fullName,
                     Modifier.size(200.dp),
                 )
-            }else {
+            } else {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "Profile Picture",
