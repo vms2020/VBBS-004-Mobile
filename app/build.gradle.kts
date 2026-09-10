@@ -96,10 +96,10 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.logging)
 
-    implementation(libs.retrofit.core)
+    //implementation(libs.retrofit.core)
     implementation(libs.okhttp.logging)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.retrofit.converter.serialization)
+//    implementation(libs.kotlinx.serialization.json)
+    //implementation(libs.retrofit.converter.serialization)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

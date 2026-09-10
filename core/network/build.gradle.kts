@@ -27,6 +27,11 @@ dependencies {
     implementation(project(":core:common"))     // SessionManager
     implementation(project(":core:datastore"))  // tokens DataStore + qualifiers
 
+    //implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0")
+    implementation(libs.androidx.annotation.experimental)
+
+
+
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.auth)
