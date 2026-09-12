@@ -16,7 +16,7 @@ import io.bbs.seva.vbbs004mobile.presentation.navigation.homeEntryBuilder
 object HomeNavModule {
     @IntoSet
     @Provides
-    fun homeEntries(): EntryProviderScope<NavKey>.(AppNavigator) -> Unit = {
+    fun homeEntry(): EntryProviderScope<NavKey>.(AppNavigator) -> Unit = {
         homeEntryBuilder(it)
     }
 }
