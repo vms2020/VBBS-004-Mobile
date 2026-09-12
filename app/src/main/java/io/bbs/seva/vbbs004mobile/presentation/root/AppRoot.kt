@@ -37,44 +37,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-//import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-//import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import io.bbs.seva.vbbs004mobile.domain.constant.LocationConstants
-//import io.bbs.seva.vbbs004mobile.domain.model.GeoLocation
-//import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
-//import io.bbs.seva.vbbs004mobile.domain.repository.GeoLocationRepository
-import io.bbs.seva.vbbs004mobile.presentation.screens.home.HomeScreen
-import io.bbs.seva.vbbs004mobile.presentation.screens.home.HomeViewModel
-import io.bbs.seva.vbbs004mobile.presentation.screens.login.LoginScreen
-import io.bbs.seva.vbbs004mobile.presentation.screens.login.LoginViewModel
 import io.bbs.seva.vbbs004mobile.presentation.menu.MenuItem
-import io.bbs.seva.vbbs004mobile.presentation.navigation.Destination
 import io.bbs.seva.vbbs004mobile.presentation.menu.getDestinationIcon
+import io.bbs.seva.vbbs004mobile.presentation.navigation.AppNavigator
+import io.bbs.seva.vbbs004mobile.presentation.navigation.Destination
 import io.bbs.seva.vbbs004mobile.presentation.screens.blogs.BlogsScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.chats.ChatsScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.currency_rates.CurrencyRatesScreen
-import io.bbs.seva.vbbs004mobile.presentation.screens.edit_profile.EditProfileScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.osm.OsmPickerScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.osm.OsmPickerViewModel
 import io.bbs.seva.vbbs004mobile.presentation.screens.shops.ShopsScreen
-import io.bbs.seva.vbbs004mobile.presentation.screens.signup.SignupScreen
-import io.bbs.seva.vbbs004mobile.presentation.screens.signup.SignupViewModel
-import io.bbs.seva.vbbs004mobile.presentation.screens.weather.WeatherScreen
-//import io.bbs.seva.vbbs004mobile.session.SessionManager
-//import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 
@@ -83,11 +69,9 @@ fun getMenuItems(isAuthenticated: Boolean): List<MenuItem> {
     return Destination.all
         .filter { dest ->
             when {
-                dest == Destination.Logout -> isAuthenticated   // show logout only if logged in
-                dest.requiresAuth -> isAuthenticated             // protected screens only if logged in
+                dest == Destination.Logout -> isAuthenticated
+                dest.requiresAuth -> isAuthenticated
                 else -> !isAuthenticated || dest == Destination.CurrencyRates
-                // public screens (Login, Signup) only if not logged in,
-                // but CurrencyRates is always visible
             }
         }
         .map { dest -> MenuItem(dest, getDestinationIcon(dest)) }
@@ -98,15 +82,10 @@ fun getMenuItems(isAuthenticated: Boolean): List<MenuItem> {
 @Composable
 fun AppRoot(
     appViewModel: AppViewModel = hiltViewModel(),
-    //authRepository: AuthRepository,
-//    sessionManager: SessionManager,
+    entryBuilders: Set<@JvmSuppressWildcards (EntryProviderScope<NavKey>.(AppNavigator) -> Unit)>,
     initialAuthState: Boolean,
-//    locationRepository: GeoLocationRepository,
 ) {
     val activity = LocalActivity.current
-//    val isAuthenticatedState =
-//        authRepository.isAuthenticated.collectAsState(initial = initialAuthState)
-//    val isAuthenticated = isAuthenticatedState.value
     val isAuthenticated = appViewModel.isAuthenticated.collectAsState().value
         ?: initialAuthState
     val locationPermissionLauncher = rememberLauncherForActivityResult(
@@ -138,54 +117,17 @@ fun AppRoot(
     val backstack = rememberNavBackStack(
         if (isAuthenticated) Destination.Home else Destination.Login
     )
-    val entryProvider = remember {
+    val navigator = remember { NavBackStackNavigator(backstack) }
+
+    val entryProvider = remember(entryBuilders) {
         entryProvider<NavKey> {
-            entry<Destination.Login> {
-                val viewModel: LoginViewModel = hiltViewModel()
-                LoginScreen(
-                    viewModel = viewModel,
-                    onNavigateToHome = { backstack.add(Destination.Home) },
-                    onNavigateToSignup = { backstack.add(Destination.Signup) },
-                )
-            }
-            entry<Destination.Home> {
-                val viewModel: HomeViewModel = hiltViewModel()
-                //val viewModel: HomeViewModel = homeViewModel
-                HomeScreen(
-//                    onBack = {
-//                        if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
-//                    },
-//                    onNavigateToWeather = { backstack.add(Destination.Weather) },
-                    viewModel = viewModel,
-                )
-            }
-            entry<Destination.Weather> {
-                WeatherScreen(
-//                    onBack = {
-//                        if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
-//                    },
-                )
-            }
+            entryBuilders.forEach { builder -> builder(navigator) }
+
             entry<Destination.GeoLocationDest> {
                 val viewModel: OsmPickerViewModel = hiltViewModel()
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
-                //var isLoading by remember { mutableStateOf(true) }
-                //var savedLocation by remember { mutableStateOf<GeoLocation?>(null) }
-//                val savedLocation = locationRepository.savedGeoLocation.collectAsState(
-//                    initial = null
-//                )
 
-//                LaunchedEffect(Unit) {
-//                    // .first() suspends until DataStore emits the first value.
-//                    // If DataStore has no saved location, this will return null.
-//                    savedLocation = locationRepository.savedGeoLocation.first()
-//                    isLoading = false // DataStore is done loading!
-//                }
-
-                // 2. Wait for DataStore to load
-                //if (savedLocation.value == null) {
                 if (state.isLoading) {
-                    // Show a loading spinner while DataStore reads the file from disk
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                     ) {
@@ -196,18 +138,14 @@ fun AppRoot(
                             CircularProgressIndicator()
                         }
                     }
-                    return@entry // Stop here, do not draw the map yet!
+                    return@entry
                 }
 
                 OsmPickerScreen(
                     initialLatitude = state.saved?.lat ?: LocationConstants.DEFAULT_LOCATION.lat,
                     initialLongitude = state.saved?.lon ?: LocationConstants.DEFAULT_LOCATION.lon,
                     onForceGpsRequest = viewModel::getFreshGpsLocation,
-//                        { callback ->
-//                        viewModel.getFreshGpsLocation { lat, lon ->
-//                            callback(lat, lon)
-//                        }
-//                    },
+
                     onLocationSelected = { a, b ->
                         viewModel.saveLocation(a, b)
                         if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
@@ -216,9 +154,6 @@ fun AppRoot(
                         if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
                     },
                 )
-            }
-            entry<Destination.EditProfile> {
-                EditProfileScreen()
             }
             entry<Destination.Blogs> {
                 BlogsScreen()
@@ -231,18 +166,6 @@ fun AppRoot(
             }
             entry<Destination.CurrencyRates> {
                 CurrencyRatesScreen()
-            }
-            entry<Destination.Signup> {
-                val viewModel: SignupViewModel = hiltViewModel()
-                SignupScreen(
-                    viewModel = viewModel,
-                    onNavigateToLogin = {
-                        if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
-                    },
-                    onNavigateToHome = {
-                        backstack.add(Destination.Home)
-                    },
-                )
             }
         }
     }

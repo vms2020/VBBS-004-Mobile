@@ -7,8 +7,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import dagger.hilt.android.AndroidEntryPoint
 import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
+import io.bbs.seva.vbbs004mobile.presentation.navigation.AppNavigator
 //import io.bbs.seva.vbbs004mobile.domain.repository.GeoLocationRepository
 import io.bbs.seva.vbbs004mobile.presentation.root.AppRoot
 //import io.bbs.seva.vbbs004mobile.session.SessionManager
@@ -25,6 +28,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var authRepository: AuthRepository
+
+    @Inject
+    lateinit var entryBuilders: Set<@JvmSuppressWildcards EntryProviderScope<NavKey>.(AppNavigator) -> Unit>
 
 //    @Inject
 //    lateinit var sessionManager: SessionManager
@@ -60,6 +66,7 @@ class MainActivity : ComponentActivity() {
             setContent {
                 Vbbs004MobileTheme {
                     AppRoot(
+                        entryBuilders = entryBuilders,
                         //authRepository = authRepository,
                         //sessionManager = sessionManager,
                         //           homeViewModel = viewModel,

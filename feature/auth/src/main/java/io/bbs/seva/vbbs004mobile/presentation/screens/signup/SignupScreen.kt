@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -75,13 +77,21 @@ fun SignupScreen(
     }
 
     Scaffold(
+        //Modifier.border(4.dp, Color.Green),
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         Box(
             modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                //.border(4.dp,Color.Yellow)
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(24.dp),
+                .padding(
+                    top = 0.dp,
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = 24.dp,
+                ),
             contentAlignment = Alignment.Center
         ) {
             Column(
