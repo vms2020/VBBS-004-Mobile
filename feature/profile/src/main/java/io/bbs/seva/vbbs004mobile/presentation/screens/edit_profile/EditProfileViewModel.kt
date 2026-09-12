@@ -57,6 +57,26 @@ class EditProfileViewModel @Inject constructor(
 
     init {
         fetchAvatarPictures()
+        refreshProfile()
+    }
+
+    fun refreshProfile() {
+        viewModelScope.launch {
+
+            authRepository.me()
+                .onFailure { exception ->
+//                    if (exception is java.net.ConnectException) {
+//                        _error.value="Connection error"
+//                    } else {
+//                        _error.value = exception.message ?: "An unknown error occurred"
+//                    }
+                    Log.e(TAG, "refreshProfile: ", exception)
+                }
+
+
+
+//            _isRefreshing.value = false
+        }
     }
 
     fun fetchAvatarPictures() {

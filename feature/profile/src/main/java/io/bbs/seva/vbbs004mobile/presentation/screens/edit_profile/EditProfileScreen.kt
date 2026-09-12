@@ -63,8 +63,11 @@ import java.io.InputStream
 import android.content.Context
 import android.provider.OpenableColumns
 import android.util.Log
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -124,8 +127,10 @@ suspend fun compressImageUri(context: Context, uri: Uri, maxBytes: Int): ByteArr
             Log.i(TAG, "compressImageUri: streamSize <= maxBytes ($streamSize<$maxBytes)")
             return@withContext context.contentResolver.openInputStream(uri).use { it?.readBytes() }
         }
-        Log.i(TAG, "compressImageUri: streamSize=$streamSize ***********************************************")
-
+        Log.i(
+            TAG,
+            "compressImageUri: streamSize=$streamSize ***********************************************"
+        )
 
 
         val originalBitmap = context.contentResolver.openInputStream(uri).use { inputStream ->
@@ -219,14 +224,20 @@ fun EditProfileScreen(
             }
         }
     }
-
+    Log.i("XCVXFV", "EditProfileScreen: ******\n$user\n*******")
     Column(
         modifier = Modifier
+            .verticalScroll(rememberScrollState())
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
+        Text(
+            "${user?.fullName ?: ""} ${user?.email?.let { "<${it}>" } ?: ""}",
+            Modifier.align(Alignment.Start),
+            style = MaterialTheme.typography.labelSmall
+        )
 
         // --- 1. HORIZONTAL AVATAR LIST ---
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -239,9 +250,10 @@ fun EditProfileScreen(
                 IconButton(
                     {
                         viewModel.fetchAvatarPictures()
+                        viewModel.refreshProfile()
                     }
                 ) {
-                    Icon(Icons.Default.Refresh,"Refresh")
+                    Icon(Icons.Default.Refresh, "Refresh")
                 }
             }
             LazyRow(
