@@ -7,16 +7,15 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -29,14 +28,12 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -44,13 +41,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import io.bbs.seva.vbbs004mobile.domain.constant.LocationConstants
 import io.bbs.seva.vbbs004mobile.presentation.menu.MenuItem
 import io.bbs.seva.vbbs004mobile.presentation.menu.getDestinationIcon
 import io.bbs.seva.vbbs004mobile.presentation.navigation.AppNavigator
@@ -58,8 +53,6 @@ import io.bbs.seva.vbbs004mobile.presentation.navigation.Destination
 import io.bbs.seva.vbbs004mobile.presentation.screens.blogs.BlogsScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.chats.ChatsScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.currency_rates.CurrencyRatesScreen
-import io.bbs.seva.vbbs004mobile.presentation.screens.osm.OsmPickerScreen
-import io.bbs.seva.vbbs004mobile.presentation.screens.osm.OsmPickerViewModel
 import io.bbs.seva.vbbs004mobile.presentation.screens.shops.ShopsScreen
 import kotlinx.coroutines.launch
 
@@ -123,38 +116,6 @@ fun AppRoot(
         entryProvider<NavKey> {
             entryBuilders.forEach { builder -> builder(navigator) }
 
-            entry<Destination.GeoLocationDest> {
-                val viewModel: OsmPickerViewModel = hiltViewModel()
-                val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-                if (state.isLoading) {
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                    return@entry
-                }
-
-                OsmPickerScreen(
-                    initialLatitude = state.saved?.lat ?: LocationConstants.DEFAULT_LOCATION.lat,
-                    initialLongitude = state.saved?.lon ?: LocationConstants.DEFAULT_LOCATION.lon,
-                    onForceGpsRequest = viewModel::getFreshGpsLocation,
-
-                    onLocationSelected = { a, b ->
-                        viewModel.saveLocation(a, b)
-                        if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
-                    },
-                    onCancelSelected = {
-                        if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
-                    },
-                )
-            }
             entry<Destination.Blogs> {
                 BlogsScreen()
             }
@@ -171,23 +132,10 @@ fun AppRoot(
     }
 
     LaunchedEffect(Unit) {
-
         appViewModel.logoutEvents.collect {
             backstack.removeAll { true }
             backstack.add(Destination.Login)
         }
-
-//        appViewModel.logoutEvents.collect {
-//        //    backstack.clear()   // or however your nav resets to login — reuse the exact logic
-//        //}
-//        //sessionManager.logoutEvents.collect {
-//            Log.i(
-//                "APPROOT",
-//                "!!!!!!!!!!!!!!!!!!!!!!!!\nAppRoot: backstack.add(Destination.Login)\n!!!!!!!!!!!!!!"
-//            )
-//            backstack.removeAll { true }
-//            backstack.add(Destination.Login)
-//        }
     }
 
     ModalNavigationDrawer(
@@ -237,8 +185,12 @@ fun AppRoot(
                 //Text("Menu", style = MaterialTheme.typography.headlineSmall)
                 HorizontalDivider()
                 val menuItems = getMenuItems(isAuthenticated)
-                menuItems.forEach { item ->
-                    NavigationDrawerItem(
+
+                LazyColumn(
+
+                ) {
+                    items(menuItems){ item ->
+                        NavigationDrawerItem(
                         label = { Text(item.destination.title) },
                         icon = { Icon(item.icon, contentDescription = null) },
                         selected = backstack.lastOrNull() == item.destination,
@@ -260,7 +212,9 @@ fun AppRoot(
                             }
                         }
                     )
+                    }
                 }
+
             }
         }
     ) {

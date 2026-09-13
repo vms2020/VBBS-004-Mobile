@@ -76,6 +76,7 @@ dependencies {
     implementation(project(":feature:weather"))
     implementation(project(":feature:home"))
     implementation(project(":feature:profile"))
+    implementation(project(":feature:location"))
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
@@ -87,7 +88,7 @@ dependencies {
 
     implementation(libs.androidx.compose.material.icons.extended)
 
-    implementation(libs.osmdroid.android)
+    //implementation(libs.osmdroid.android)
 
     implementation(libs.coil.compose)
 
