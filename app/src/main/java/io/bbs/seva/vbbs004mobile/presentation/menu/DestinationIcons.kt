@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.ui.graphics.vector.ImageVector
 import io.bbs.seva.vbbs004mobile.presentation.navigation.Destination
@@ -20,6 +21,7 @@ fun getDestinationIcon(destination: Destination): ImageVector {
         Destination.Home -> Icons.Default.Home
         Destination.Weather -> Icons.Default.WbSunny
         Destination.CurrencyRates -> Icons.Default.AttachMoney
+        is Destination.CurrencyDynamics -> Icons.Default.TableChart
         Destination.Login -> Icons.AutoMirrored.Filled.Login
         Destination.Signup -> Icons.Default.PersonAdd
         Destination.Logout -> Icons.AutoMirrored.Filled.Logout

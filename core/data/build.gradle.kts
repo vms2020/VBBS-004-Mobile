@@ -5,6 +5,9 @@ plugins {
 
 android {
     namespace = "io.bbs.seva.vbbs004mobile.core.data"
+    defaultConfig {
+        testInstrumentationRunner = "io.bbs.seva.vbbs004mobile.di.HiltTestRunner"
+    }
 }
 
 dependencies {
@@ -18,4 +21,9 @@ dependencies {
     implementation(libs.coil.compose)           // if picture/avatar code imports it — drop if not
 //    implementation(libs.hilt.android)
 //    ksp(libs.hilt.compiler)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation("androidx.test:runner:1.7.0")
+
 }

@@ -2,6 +2,7 @@ package io.bbs.seva.vbbs004mobile.di
 
 // di/NetworkModule.kt
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import androidx.datastore.core.DataStore
 import dagger.Module
@@ -43,11 +44,17 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.Url
 import io.ktor.http.contentType
 import kotlinx.coroutines.flow.first
+import io.ktor.client.engine.okhttp.*
+import io.ktor.client.plugins.CurlUserAgent
+import io.ktor.client.plugins.UserAgent
+import java.net.InetSocketAddress
+import java.net.Proxy
 
 //val apiHost = runCatching {
 //    Url(BuildConfig.BASE_URL).host
 //}.getOrNull() ?: ""
 val apiHost = Url(BuildConfig.BASE_URL).host
+
 class UnauthorizedException(val serverMessage: String) : Exception(serverMessage)
 
 @Module
@@ -56,13 +63,33 @@ object NetworkModule {
 
     private const val TAG = "NetworkModule"
 
+    private fun buildAndroidUserAgent(): String {
+        val appName = "VBBS004 Mobile" // Or pull from R.string.app_name
+        val appVersion = "v0.0.4-alpha" // Use BuildConfig.VERSION_NAME in a real app
+
+        val osVersion = Build.VERSION.RELEASE
+        val model = Build.MODEL
+        val buildId = Build.ID
+
+        return "$appName/$appVersion (Linux; U; Android $osVersion; $model Build/$buildId)"
+    }
+
     @Provides
     @Singleton
     fun provideHttpClient(
         @TokensDataStore authDataStore: DataStore<AuthTokens>,
         sessionManager: SessionManager,
     ): HttpClient {
-        return HttpClient {
+        return HttpClient(OkHttp) {
+            install(UserAgent) {
+                // Example output: MyApp/1.4.2 (Linux; U; Android 14; Pixel 8 Pro Build/AP1A.240305.019)
+                agent = buildAndroidUserAgent()
+            }
+            engine {
+                config {
+                    proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress("127.0.0.1", 9150)))
+                }
+            }
             expectSuccess = true
             HttpResponseValidator {
                 handleResponseException { exception ->
@@ -122,13 +149,28 @@ object NetworkModule {
                         val currentTokens = authDataStore.data.first()
                         if (currentTokens.refreshToken == null) return@refreshTokens null
                         val refreshClient =
-                            HttpClient {
+                            HttpClient(OkHttp) {
+                                install(UserAgent) {
+                                    // Example output: MyApp/1.4.2 (Linux; U; Android 14; Pixel 8 Pro Build/AP1A.240305.019)
+                                    agent = buildAndroidUserAgent()
+                                }
+                                engine {
+                                    config {
+                                        proxy(
+                                            Proxy(
+                                                Proxy.Type.SOCKS,
+                                                InetSocketAddress("127.0.0.1", 9150)
+                                            )
+                                        )
+                                    }
+                                }
                                 install(ContentNegotiation) { json() }
                                 install(Logging) {
                                     //level = LogLevel.BODY
                                     level = LogLevel.ALL
                                     logger = Logger.ANDROID
                                 }
+
                             }
                         try {
                             // Create a clean, isolated client instance to avoid infinite 401 loops

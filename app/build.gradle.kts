@@ -26,8 +26,8 @@ android {
         applicationId = "io.bbs.seva.vbbs004mobile"
         minSdk = 24
         targetSdk = 37
-        versionCode = 1
-        versionName = "alpha-v0.0.1"
+        versionCode = 2
+        versionName = "v0.0.2-alpha"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 //        val localProperties = Properties().apply {
@@ -64,6 +64,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature:currency_rates"))
+
     implementation(project(":core:datastore"))
     //implementation(project(":core:domain"))
     implementation(project(":core:common"))
@@ -94,7 +96,7 @@ dependencies {
 
     implementation(libs.ktor.client.auth)
     implementation(libs.slf4j.simple)
-   // implementation(libs.logback.android)
+    // implementation(libs.logback.android)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.content.negotiation)

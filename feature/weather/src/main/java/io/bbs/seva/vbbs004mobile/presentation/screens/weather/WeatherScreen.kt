@@ -16,30 +16,33 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeviceThermostat
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import io.bbs.seva.vbbs004mobile.domain.model.AppError
 import io.bbs.seva.vbbs004mobile.domain.model.weather.Weather
+import io.bbs.seva.vbbs004mobile.feature.weather.R
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -61,139 +64,138 @@ fun formatWeatherTime(epochSecond: Long?): String {
     }
 }
 
-/*
-
 @Composable
 fun WeatherScreen(
     modifier: Modifier = Modifier,
-    viewModel: WeatherViewModel = hiltViewModel()
+    viewModel: WeatherViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()   // ← lifecycle-aware
 
+    when {
+        state.isLoading -> {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()                        // ← the missing branch
+            }
+        }
 
-    PullToRefreshBox(
-        isRefreshing = state.isLoading,
-        onRefresh = { viewModel.fetchWeather() },
-        modifier = modifier,
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-            contentAlignment = Alignment.Center,
-        ) {
-            when {
-                state.isLoading -> {}//CircularProgressIndicator()
-
-                state.error != null -> {
-                    Text(text = "Error: ${state.error}", color = MaterialTheme.colorScheme.error)
-                }
-
-                state.weather != null -> {
-                    Column {
-                        if (state.weather?.current?.time != null) {
-                            Text(
-                                Instant.ofEpochSecond(state.weather?.current?.time ?: 0)
-                                    .atZone(ZoneId.systemDefault()).toString()
-                                //state.weather?.zonedDateTime?:""
-                            )
+        state.error != null -> {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        //"Error: ${state.error}"
+                        text = when (state.error) {
+                            AppError.Network -> stringResource(R.string.weather_error_network)
+                            AppError.Unknown  -> stringResource(R.string.weather_error_unknown)
+                            AppError.Server -> "Server Error"
+                            null -> ""
                         }
-                        if (state.weather?.current?.icon != null) {
-                            AsyncImage(
-                                state.weather?.current?.icon,
-                                state.weather?.current?.condition
-                            )
-                        }
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Icon(
-                                Icons.Filled.DeviceThermostat,
-                                "temperature"
-                            )
-                            Text(
-                                text = ": ${state.weather?.current?.temperature}°C",
-                                style = MaterialTheme.typography.headlineMedium
-                            )
-                        }
+                        ,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(24.dp),
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Button(onClick = viewModel::retry) {          // ← retry consumer
                         Text(
-                            text = "Condition: ${state.weather?.current?.condition}",
-                            style = MaterialTheme.typography.bodyLarge
+//                            "Retry"
+                            stringResource(R.string.weather_retry)
                         )
                     }
                 }
             }
         }
-    }
-}
 
-*/
-
-
-@Composable
-fun WeatherScreen(
-    modifier: Modifier = Modifier,
-    viewModel: WeatherViewModel = hiltViewModel()
-) {
-    val state by viewModel.state.collectAsState()
-
-    PullToRefreshBox(
-        isRefreshing = state.isLoading,
-        onRefresh = { viewModel.fetchWeather() },
-        modifier = modifier.fillMaxSize(),
-    ) {
-        when {
-            // Error View
-            state.error != null -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                    contentAlignment = Alignment.Center
-                ) {
+        else -> PullToRefreshBox(
+            isRefreshing = state.isRefreshing,                    // ← its own flag
+            onRefresh = viewModel::refresh,                       // ← its own call
+            modifier = modifier.fillMaxSize(),
+        ) {
+            val dashboard = state.weather ?: return@PullToRefreshBox
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                item { CurrentWeatherHeaderCard(weather = dashboard.current) }
+                item {
                     Text(
-                        text = "Error: ${state.error}",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyLarge
+                        "Forecast Lookahead",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
                     )
                 }
-            }
-
-            // Success View with Scrollable Content
-            state.weather != null -> {
-                val dashboard = state.weather!!
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // 1. Current Weather Header Item
-                    item {
-                        CurrentWeatherHeaderCard(weather = dashboard.current)
-                    }
-
-                    // 2. Forecast Section Header
-                    item {
-                        Text(
-                            text = "Forecast Lookahead",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
-                        )
-                    }
-
-                    // 3. Scrollable List of Forecast Rows
-                    items(dashboard.forecast.items) { forecastItem ->
-                        ForecastItemRow(weather = forecastItem)
-                    }
-                }
+                items(dashboard.forecast.items) { ForecastItemRow(weather = it) }
             }
         }
     }
 }
+
+//@Composable
+//fun WeatherScreen(
+//    modifier: Modifier = Modifier,
+//    viewModel: WeatherViewModel = hiltViewModel()
+//) {
+//    val state by viewModel.state.collectAsState()
+//
+//    PullToRefreshBox(
+//        isRefreshing = state.isLoading,
+//        onRefresh = { viewModel.fetchWeather() },
+//        modifier = modifier.fillMaxSize(),
+//    ) {
+//        when {
+//            // Error View
+//            state.error != null -> {
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .verticalScroll(rememberScrollState()),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Text(
+//                        text = "Error: ${state.error}",
+//                        color = MaterialTheme.colorScheme.error,
+//                        style = MaterialTheme.typography.bodyLarge
+//                    )
+//                }
+//            }
+//
+//            // Success View with Scrollable Content
+//            state.weather != null -> {
+//                val dashboard = state.weather!!
+//
+//                LazyColumn(
+//                    modifier = Modifier.fillMaxSize(),
+//                    contentPadding = PaddingValues(16.dp),
+//                    verticalArrangement = Arrangement.spacedBy(16.dp)
+//                ) {
+//                    // 1. Current Weather Header Item
+//                    item {
+//                        CurrentWeatherHeaderCard(weather = dashboard.current)
+//                    }
+//
+//                    // 2. Forecast Section Header
+//                    item {
+//                        Text(
+//                            text = "Forecast Lookahead",
+//                            style = MaterialTheme.typography.titleMedium,
+//                            fontWeight = FontWeight.Bold,
+//                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+//                            modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+//                        )
+//                    }
+//
+//                    // 3. Scrollable List of Forecast Rows
+//                    items(dashboard.forecast.items) { forecastItem ->
+//                        ForecastItemRow(weather = forecastItem)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 @Composable
 fun CurrentWeatherHeaderCard(weather: Weather, modifier: Modifier = Modifier) {

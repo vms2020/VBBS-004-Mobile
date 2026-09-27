@@ -18,11 +18,18 @@ sealed class Destination : NavKey {
     data object Weather : Destination()
 
     @Serializable
-    class GeoLocationDest(val lat: Double, val lon: Double): Destination()
+    class GeoLocationDest(val lat: Double, val lon: Double) : Destination()
 
     // New
     @Serializable
     data object CurrencyRates : Destination()
+
+    @Serializable
+    data class CurrencyDynamics(
+        val currencyId: String,     // "R01235"
+        val charCode: String,       // "USD"
+        val name: String,           // Доллар США
+    ) : Destination()
 
     @Serializable
     data object Signup : Destination()
@@ -56,6 +63,7 @@ sealed class Destination : NavKey {
             Blogs -> "Blogs"
             Shops -> "Shops"
             Chats -> "Chats"
+            is CurrencyDynamics -> "Currency Rates Dynamics"
         }
 
     val requiresAuth: Boolean

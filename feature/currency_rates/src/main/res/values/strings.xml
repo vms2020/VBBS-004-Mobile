@@ -1,0 +1,21 @@
+<!-- feature/currency_rates/src/main/res/values/strings.xml  (default = en) -->
+<resources>
+    <string name="currency_rates_error_load">Could not load rates. Check your connection and try again.</string>
+    <string name="currency_rates_title">Exchange rates</string>
+    <string name="currency_rates_retry">Retry</string>
+    <string name="currency_rates_updated_on">CBR %1$s</string>
+
+    <string name="currency_rates_select_date">Select date</string>
+    <string name="currency_rates_show_latest">Show latest</string>
+    <string name="currency_rates_ok">OK</string>
+    <string name="currency_rates_cancel">Cancel</string>
+
+    <string name="currency_dynamics_empty">No data for this period</string>
+    <string name="currency_dynamics_title">dynamics</string>
+
+    <string name="currency_rates_error_server">Server error. Try again later.</string>
+
+    <string name="currency_dynamics_pick_interval">Select period</string>
+    <string name="currency_dynamics_ok">OK</string>
+
+</resources>

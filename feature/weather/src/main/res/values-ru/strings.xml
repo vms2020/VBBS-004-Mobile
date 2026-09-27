@@ -1,0 +1,7 @@
+<resources>
+    <string name="weather_title">Погода</string>
+    <string name="weather_show_map">Открыть карту</string>
+    <string name="weather_error_network">Не удалось загрузить погоду. Проверьте подключение и попробуйте ещё раз.</string>
+    <string name="weather_error_unknown">Что-то пошло не так. Попробуйте ещё раз.</string>
+    <string name="weather_retry">Повторить</string>
+</resources>

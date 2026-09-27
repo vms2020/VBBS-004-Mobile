@@ -1,0 +1,21 @@
+<!-- feature/currency_rates/src/main/res/values-ru/strings.xml -->
+<resources>
+    <string name="currency_rates_error_load">Не удалось загрузить курсы. Проверьте подключение и повторите попытку.</string>
+    <string name="currency_rates_title">Курсы валют</string>
+    <string name="currency_rates_retry">Повторить</string>
+    <string name="currency_rates_updated_on">ЦБ РФ %1$s</string>
+
+    <string name="currency_rates_select_date">Выбрать дату</string>
+    <string name="currency_rates_show_latest">Показать актуальные</string>
+    <string name="currency_rates_ok">ОК</string>
+    <string name="currency_rates_cancel">Отмена</string>
+
+    <string name="currency_dynamics_empty">Нет данных за этот период</string>
+    <string name="currency_dynamics_title">динамика</string>
+
+    <string name="currency_rates_error_server">Ошибка сервера. Попробуйте позже.</string>
+
+    <string name="currency_dynamics_pick_interval">Выбрать период</string>
+    <string name="currency_dynamics_ok">ОК</string>
+
+</resources>

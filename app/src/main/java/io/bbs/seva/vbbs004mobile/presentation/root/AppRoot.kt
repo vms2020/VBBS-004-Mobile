@@ -32,12 +32,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -46,13 +48,16 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import io.bbs.seva.vbbs004mobile.R
+import io.bbs.seva.vbbs004mobile.core.designsystem.topbar.LocalTopBarController
+import io.bbs.seva.vbbs004mobile.core.designsystem.topbar.TopBarAction
+import io.bbs.seva.vbbs004mobile.core.designsystem.topbar.TopBarController
 import io.bbs.seva.vbbs004mobile.presentation.menu.MenuItem
 import io.bbs.seva.vbbs004mobile.presentation.menu.getDestinationIcon
 import io.bbs.seva.vbbs004mobile.presentation.navigation.AppNavigator
 import io.bbs.seva.vbbs004mobile.presentation.navigation.Destination
 import io.bbs.seva.vbbs004mobile.presentation.screens.blogs.BlogsScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.chats.ChatsScreen
-import io.bbs.seva.vbbs004mobile.presentation.screens.currency_rates.CurrencyRatesScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.shops.ShopsScreen
 import kotlinx.coroutines.launch
 
@@ -111,6 +116,7 @@ fun AppRoot(
         if (isAuthenticated) Destination.Home else Destination.Login
     )
     val navigator = remember { NavBackStackNavigator(backstack) }
+    val topBarController = remember { TopBarController() }
 
     val entryProvider = remember(entryBuilders) {
         entryProvider<NavKey> {
@@ -125,9 +131,9 @@ fun AppRoot(
             entry<Destination.Chats> {
                 ChatsScreen()
             }
-            entry<Destination.CurrencyRates> {
-                CurrencyRatesScreen()
-            }
+//            entry<Destination.CurrencyRates> {
+//                CurrencyRatesScreen()
+//            }
         }
     }
 
@@ -138,160 +144,190 @@ fun AppRoot(
         }
     }
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        gesturesEnabled = backstack.lastOrNull() !is Destination.GeoLocationDest,
-        drawerContent = {
-            ModalDrawerSheet(
-                // Forces the drawer sheet to a dedicated width, leaving explicit screen space on the right side
-                modifier = Modifier
-                    .requiredWidth(300.dp)
+    CompositionLocalProvider(LocalTopBarController provides topBarController) {
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            gesturesEnabled = backstack.lastOrNull() !is Destination.GeoLocationDest,
+            drawerContent = {
+                ModalDrawerSheet(
+                    // Forces the drawer sheet to a dedicated width, leaving explicit screen space on the right side
+                    modifier = Modifier
+                        .requiredWidth(300.dp)
 //                    .fillMaxHeight()
 //                    .padding(top = 32.dp)
 
-            ) {
-
-                // Add a structured header row containing a close action icon
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
-                    // Visible close action icon inside the open drawer sheet
-                    IconButton(
-                        onClick = {
-                            scope.launch { drawerState.close() }
-                        },
+                    // Add a structured header row containing a close action icon
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 8.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
 
-                        ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Close Menu"
+                        // Visible close action icon inside the open drawer sheet
+                        IconButton(
+                            onClick = {
+                                scope.launch { drawerState.close() }
+                            },
+
+                            ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Close Menu"
+                            )
+                        }
+                        Text(
+                            "Menu",
+                            modifier = Modifier.weight(1f),
+                            style = MaterialTheme.typography.headlineSmall,
+                            textAlign = TextAlign.Center,
                         )
+
                     }
-                    Text(
-                        "Menu",
-                        modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center,
-                    )
-
-                }
 
 
-                //Text("Menu", style = MaterialTheme.typography.headlineSmall)
-                HorizontalDivider()
-                val menuItems = getMenuItems(isAuthenticated)
+                    //Text("Menu", style = MaterialTheme.typography.headlineSmall)
+                    HorizontalDivider()
+                    val menuItems = getMenuItems(isAuthenticated)
 
-                LazyColumn(
+                    LazyColumn(
 
-                ) {
-                    items(menuItems){ item ->
-                        NavigationDrawerItem(
-                        label = { Text(item.destination.title) },
-                        icon = { Icon(item.icon, contentDescription = null) },
-                        selected = backstack.lastOrNull() == item.destination,
-                        onClick = {
-                            scope.launch { drawerState.close() }
-                            // Navigate
-                            if (item.destination == Destination.Logout) {
-                                // Perform logout (call authRepository.logout(), etc.)
-                                // You can also emit a logout event
-                                appViewModel.logout()
+                    ) {
+                        items(menuItems) { item ->
+                            NavigationDrawerItem(
+                                label = { Text(item.destination.title) },
+                                icon = { Icon(item.icon, contentDescription = null) },
+                                selected = backstack.lastOrNull() == item.destination,
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                    // Navigate
+                                    if (item.destination == Destination.Logout) {
+                                        // Perform logout (call authRepository.logout(), etc.)
+                                        // You can also emit a logout event
+                                        appViewModel.logout()
 //                                scope.launch {
 //                                    authRepository.logout()
 //                                    // The isAuthenticated state will become false,
 //                                    // and the LaunchedEffect will reset backstack
 //                                }
-                            } else {
-                                // For simplicity, add to backstack
-                                backstack.add(item.destination)
-                            }
-                        }
-                    )
-                    }
-                }
-
-            }
-        }
-    ) {
-        // Main content with Scaffold and BottomBar
-        Scaffold(
-            bottomBar = {
-                // Optional: show bottom bar only for authenticated users
-                if (isAuthenticated) {
-                    NavigationBar {
-                        listOf(Destination.Home, Destination.Weather, Destination.CurrencyRates)
-                            .forEach { dest ->
-                                NavigationBarItem(
-                                    selected = backstack.lastOrNull() == dest,
-                                    onClick = { backstack.add(dest) },
-                                    icon = { Icon(getDestinationIcon(dest), null) },
-                                    label = { Text(dest.title) }
-                                )
-                            }
-                    }
-                }
-            },
-            topBar = {
-                TopAppBar(
-                    title = { Text("V BBS 004") },
-                    navigationIcon = {
-                        if (backstack.lastOrNull() is Destination.GeoLocationDest) {
-                            IconButton({
-//                                scope.launch {
-                                if (backstack.size > 1)
-                                    backstack.removeAt(backstack.lastIndex)
-//                                }
-                            }) {
-                                Icon(
-                                    Icons.AutoMirrored.Filled.ArrowBack,
-                                    "Back",
-                                )
-                            }
-                        } else {
-                            IconButton({
-                                scope.launch {
-                                    if (drawerState.isClosed) {
-                                        drawerState.open()
                                     } else {
-                                        drawerState.close()
+                                        // For simplicity, add to backstack
+                                        backstack.add(item.destination)
                                     }
                                 }
-                            }) {
-                                Icon(Icons.Default.Menu, "Menu")
-                            }
-                        }
-                    },
-                    actions = {
-                        if (backstack.lastOrNull() is Destination.Weather) {
-                            IconButton({
-                                backstack.add(Destination.GeoLocationDest(0.0, 0.0))
-                            }) {
-                                Icon(
-                                    getDestinationIcon(
-                                        Destination.GeoLocationDest(0.0, 0.0)
-                                    ), "Map"
-                                )
-                            }
+                            )
                         }
                     }
+
+                }
+            }
+        ) {
+            // Main content with Scaffold and BottomBar
+            Scaffold(
+                bottomBar = {
+                    // Optional: show bottom bar only for authenticated users
+                    if (isAuthenticated) {
+                        NavigationBar {
+                            listOf(Destination.Home, Destination.Weather, Destination.CurrencyRates)
+                                .forEach { dest ->
+                                    NavigationBarItem(
+                                        selected = backstack.lastOrNull() == dest,
+                                        onClick = { backstack.add(dest) },
+                                        icon = { Icon(getDestinationIcon(dest), null) },
+                                        label = { Text(dest.title) }
+                                    )
+                                }
+                        }
+                    }
+                },
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            val t = topBarController.state.title
+                            Text(if (t.isBlank()) stringResource(R.string.app_name) else t)
+                            //Text("V BBS 004")
+                        },
+                        navigationIcon = {
+                            //val current = backstack.lastOrNull()
+                            //when(val current = backstack.lastOrNull()) {
+                            when(backstack.lastOrNull()) {
+                                is Destination.GeoLocationDest,
+                                is Destination.CurrencyDynamics -> {
+                                    IconButton({
+                                        if (backstack.size > 1)
+                                            backstack.removeAt(backstack.lastIndex)
+                                    }) {
+                                        Icon(
+                                            Icons.AutoMirrored.Filled.ArrowBack,
+                                            "Back",
+                                        )
+                                    }
+                                }
+                                else -> {
+                                    IconButton({
+                                        scope.launch {
+                                            if (drawerState.isClosed) {
+                                                drawerState.open()
+                                            } else {
+                                                drawerState.close()
+                                            }
+                                        }
+                                    }) {
+                                        Icon(Icons.Default.Menu, "Menu")
+                                    }
+                                }
+                            }
+                        },
+                        actions = {
+                            topBarController.state.actions.forEach { action ->
+                                when (action) {
+                                    is TopBarAction.MyTopBarActionIconButton -> IconButton(onClick = action.onClick) {
+                                        Icon(
+                                            imageVector = action.icon,
+                                            contentDescription = action.contentDescription,
+                                        )
+                                    }
+                                }
+                            }
+
+//                            topBarController.state.actions.forEach { action ->
+//                                IconButton(onClick = action.onClick) {
+//                                    Icon(
+//                                        action.icon,
+//                                        contentDescription = action.contentDescription
+//                                    )
+//                                }
+//                            }
+
+//                            if (backstack.lastOrNull() is Destination.Weather) {
+//                                IconButton({
+//                                    backstack.add(Destination.GeoLocationDest(0.0, 0.0))
+//                                }) {
+//                                    Icon(
+//                                        getDestinationIcon(
+//                                            Destination.GeoLocationDest(0.0, 0.0)
+//                                        ), "Map"
+//                                    )
+//                                }
+//                            }
+                        }
+                    )
+                }
+
+            ) { innerPadding ->
+                NavDisplay(
+                    modifier = Modifier.padding(innerPadding),
+                    backStack = backstack,
+                    onBack = {
+                        if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
+                        else activity?.finish()
+                    },
+                    entryProvider = entryProvider
                 )
             }
-
-        ) { innerPadding ->
-            NavDisplay(
-                modifier = Modifier.padding(innerPadding),
-                backStack = backstack,
-                onBack = {
-                    if (backstack.size > 1) backstack.removeAt(backstack.lastIndex)
-                    else activity?.finish()
-                },
-                entryProvider = entryProvider
-            )
         }
     }
 }
