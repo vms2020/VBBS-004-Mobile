@@ -85,11 +85,11 @@ object NetworkModule {
                 // Example output: MyApp/1.4.2 (Linux; U; Android 14; Pixel 8 Pro Build/AP1A.240305.019)
                 agent = buildAndroidUserAgent()
             }
-            engine {
-                config {
-                    proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress("127.0.0.1", 9150)))
-                }
-            }
+//            engine {
+//                config {
+//                    proxy(Proxy(Proxy.Type.SOCKS, InetSocketAddress("127.0.0.1", 9150)))
+//                }
+//            }
             expectSuccess = true
             HttpResponseValidator {
                 handleResponseException { exception ->
@@ -154,16 +154,16 @@ object NetworkModule {
                                     // Example output: MyApp/1.4.2 (Linux; U; Android 14; Pixel 8 Pro Build/AP1A.240305.019)
                                     agent = buildAndroidUserAgent()
                                 }
-                                engine {
-                                    config {
-                                        proxy(
-                                            Proxy(
-                                                Proxy.Type.SOCKS,
-                                                InetSocketAddress("127.0.0.1", 9150)
-                                            )
-                                        )
-                                    }
-                                }
+//                                engine {
+//                                    config {
+//                                        proxy(
+//                                            Proxy(
+//                                                Proxy.Type.SOCKS,
+//                                                InetSocketAddress("127.0.0.1", 9150)
+//                                            )
+//                                        )
+//                                    }
+//                                }
                                 install(ContentNegotiation) { json() }
                                 install(Logging) {
                                     //level = LogLevel.BODY
