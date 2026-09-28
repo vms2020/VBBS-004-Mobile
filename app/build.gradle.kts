@@ -64,6 +64,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature:settings"))
     implementation(project(":feature:currency_rates"))
 
     implementation(project(":core:datastore"))

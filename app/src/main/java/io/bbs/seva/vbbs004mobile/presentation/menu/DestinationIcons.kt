@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material.icons.filled.WbSunny
@@ -30,6 +31,7 @@ fun getDestinationIcon(destination: Destination): ImageVector {
         Destination.Shops -> Icons.Default.ShoppingCart
         Destination.Chats -> Icons.AutoMirrored.Filled.Chat
         is Destination.GeoLocationDest -> Icons.Default.Map
+        is Destination.SettingsDest -> Icons.Default.Settings
         //else -> Icons.Default.Star
     }
 }

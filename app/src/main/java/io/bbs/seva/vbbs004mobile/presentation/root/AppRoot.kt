@@ -8,11 +8,14 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
@@ -67,9 +70,10 @@ fun getMenuItems(isAuthenticated: Boolean): List<MenuItem> {
     return Destination.all
         .filter { dest ->
             when {
-                dest == Destination.Logout -> isAuthenticated
+                // dest == Destination.Logout -> isAuthenticated
                 dest.requiresAuth -> isAuthenticated
                 else -> !isAuthenticated || dest == Destination.CurrencyRates
+                        || dest == Destination.SettingsDest
             }
         }
         .map { dest -> MenuItem(dest, getDestinationIcon(dest)) }
@@ -196,7 +200,18 @@ fun AppRoot(
                     LazyColumn(
 
                     ) {
-                        items(menuItems) { item ->
+                        itemsIndexed(menuItems) { index, item ->
+
+                            if (index == menuItems.lastIndex) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                    thickness = 1.dp,
+                                    color = MaterialTheme.colorScheme.outlineVariant
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
+
                             NavigationDrawerItem(
                                 label = { Text(item.destination.title) },
                                 icon = { Icon(item.icon, contentDescription = null) },

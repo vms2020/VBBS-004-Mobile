@@ -49,6 +49,9 @@ sealed class Destination : NavKey {
     @Serializable
     data object Chats : Destination()
 
+    @Serializable
+    class SettingsDest: Destination()
+
     // Metadata
     val title: String
         get() = when (this) {
@@ -64,11 +67,12 @@ sealed class Destination : NavKey {
             Shops -> "Shops"
             Chats -> "Chats"
             is CurrencyDynamics -> "Currency Rates Dynamics"
+            is SettingsDest -> "Settings"
         }
 
     val requiresAuth: Boolean
         get() = when (this) {
-            Login, Signup, CurrencyRates -> false
+            Login, Signup, CurrencyRates, SettingsDest() -> false
             else -> true
         }
 
@@ -101,6 +105,7 @@ sealed class Destination : NavKey {
                     // Add a default GeoLocationDest for the menu
                     // (You will pass the real GeoLocation when navigating)
                     add(GeoLocationDest(0.0, 0.0))
+                    add(SettingsDest())
                 }
         }
 
