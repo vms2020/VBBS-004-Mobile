@@ -28,6 +28,13 @@ jobs:
           java-package: 'jdk'
           cache: 'gradle'
 
+      - name: Create local.properties
+        env:
+          SECRET_BASE_URL: ${{ secrets.BASE_URL }}
+        run: |
+          #echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "BASE_URL=$SECRET_BASE_URL" >> local.properties
+
       - name: Build APK
         run: |
           ./gradlew assembleRelease
