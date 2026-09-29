@@ -3,8 +3,10 @@ package io.bbs.seva.vbbs004mobile.data.datastore
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
+import io.bbs.seva.vbbs004mobile.data.datastore.model.AppSettingsData
 import io.bbs.seva.vbbs004mobile.data.datastore.model.GeoLocationData
 import io.bbs.seva.vbbs004mobile.data.datastore.model.UserProfile
+import io.bbs.seva.vbbs004mobile.data.datastore.serializer.AppSettingsSerializer
 import io.bbs.seva.vbbs004mobile.data.datastore.serializer.GeoLocationSerializer
 import io.bbs.seva.vbbs004mobile.data.datastore.serializer.UserProfileSerializer
 import io.bbs.seva.vbbs004mobile.data.security.AuthTokensSerializer
@@ -24,4 +26,9 @@ val Context.authDataStore by dataStore(
 val Context.locationDataStore: DataStore<GeoLocationData> by dataStore(
     fileName = "Geolocation.json",
     serializer = GeoLocationSerializer
+)
+
+val Context.appSettingsDataStore: DataStore<AppSettingsData> by dataStore(
+    fileName = "AppSettings.json",
+    serializer = AppSettingsSerializer
 )

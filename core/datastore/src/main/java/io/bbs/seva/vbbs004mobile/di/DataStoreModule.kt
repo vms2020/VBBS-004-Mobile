@@ -9,8 +9,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.bbs.seva.vbbs004mobile.data.datastore.appSettingsDataStore
 import io.bbs.seva.vbbs004mobile.data.datastore.authDataStore
 import io.bbs.seva.vbbs004mobile.data.datastore.locationDataStore
+import io.bbs.seva.vbbs004mobile.data.datastore.model.AppSettingsData
 import io.bbs.seva.vbbs004mobile.data.datastore.model.GeoLocationData
 import io.bbs.seva.vbbs004mobile.data.datastore.model.UserProfile
 import io.bbs.seva.vbbs004mobile.data.datastore.profileDataStore
@@ -34,6 +36,10 @@ annotation class ProfileDataStore
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class LocationDataStore
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class AppSettingsDataStore
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -66,6 +72,13 @@ object DataStoreModule {
     @LocationDataStore
     fun provideLocationDataStore(@ApplicationContext context: Context): DataStore<GeoLocationData> {
         return context.locationDataStore
+    }
+
+    @Provides
+    @Singleton
+    @AppSettingsDataStore
+    fun provideAppSettingsDataStore(@ApplicationContext context: Context): DataStore<AppSettingsData> {
+        return context.appSettingsDataStore
     }
 
 
