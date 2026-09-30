@@ -26,8 +26,8 @@ android {
         applicationId = "io.bbs.seva.vbbs004mobile"
         minSdk = 24
         targetSdk = 37
-        versionCode = 4
-        versionName = "v0.0.4-alpha"
+        versionCode = 5
+        versionName = "v0.0.5-alpha"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 //        val localProperties = Properties().apply {
