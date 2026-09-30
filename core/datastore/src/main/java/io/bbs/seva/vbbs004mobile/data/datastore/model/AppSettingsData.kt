@@ -35,7 +35,7 @@ fun AppSettingsData.toDomain(): AppSettings {
             isEnabled = false,
             protocol = "SOCKS",
             host = "127.0.0.1",
-            port = 9159
+            port = 9150
         )
     )
 }

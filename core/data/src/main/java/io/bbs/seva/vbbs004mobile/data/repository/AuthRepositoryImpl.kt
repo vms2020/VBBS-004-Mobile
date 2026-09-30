@@ -60,8 +60,6 @@ class AuthRepositoryImpl @Inject constructor(
     @ApplicationScope appScope: CoroutineScope
 ) : AuthRepository {
 
-    private val baseUrl = BuildConfig.BASE_URL
-
     override val isAuthenticated: Flow<Boolean> = authDataStore.data
         .map { tokens ->
             !tokens.accessToken.isNullOrBlank() && !tokens.refreshToken.isNullOrBlank()
@@ -79,7 +77,7 @@ class AuthRepositoryImpl @Inject constructor(
     
 
     override suspend fun login(email: String, password: String): Result<User> = runCatching {
-        val response: AuthResponse = httpClient.post("${baseUrl}auth/login") {
+        val response: AuthResponse = httpClient.post("auth/login") {
 //            contentType(ContentType.Application.Json)
             setBody(LoginRequest(email, password))
         }.body()
@@ -119,7 +117,7 @@ class AuthRepositoryImpl @Inject constructor(
         age: Int?,
         avatarUrl: String?,
     ): Result<User> = runCatching {
-        val response: SignUpResponseDto = httpClient.post("${baseUrl}auth/signup") {
+        val response: SignUpResponseDto = httpClient.post("auth/signup") {
 //            contentType(ContentType.Application.Json)
             setBody(
                 SignupRequestDto(
@@ -156,7 +154,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun logout(): Result<Unit> = runCatching {
         var r = authDataStore.data.first()
         Log.i(TAG, "logout: $r")
-        var response = httpClient.post("${baseUrl}auth/logout") {
+        var response = httpClient.post("auth/logout") {
 //            contentType(ContentType.Application.Json)
             setBody(
                 mapOf("refresh_token" to r.refreshToken)
@@ -170,7 +168,7 @@ class AuthRepositoryImpl @Inject constructor(
         if (response.status == HttpStatusCode.Unauthorized) {
             r = authDataStore.data.first()
             Log.i(TAG, "second logout: $r")
-            response = httpClient.post("${baseUrl}auth/logout") {
+            response = httpClient.post("auth/logout") {
                 setBody(
                     mapOf("refresh_token" to r.refreshToken)
                 )
@@ -190,7 +188,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun uploadPic(picArray: ByteArray): Result<String> = runCatching {
         val uploadResponse: io.ktor.client.statement.HttpResponse =
             httpClient.submitFormWithBinaryData(
-                url = "${baseUrl}pictures/upload",
+                url = "pictures/upload",
                 formData = formData {
                     append("file", picArray, Headers.build {
                         append(HttpHeaders.ContentType, ContentType.Image.JPEG.toString())
@@ -262,7 +260,7 @@ class AuthRepositoryImpl @Inject constructor(
             age = age,
         )
 
-        val response: ChangeProfileResponseDto = httpClient.patch("${baseUrl}auth/change-profile") {
+        val response: ChangeProfileResponseDto = httpClient.patch("auth/change-profile") {
             setBody(requestBody)
         }.body()
 
@@ -279,7 +277,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun me(): Result<User> = runCatching {
-        val response: MeResponse = httpClient.get("${baseUrl}auth/me").body()
+        val response: MeResponse = httpClient.get("auth/me").body()
         profileDataStore.updateData { currentProfile ->
             currentProfile.copy(
                 id = response.user.id,
@@ -301,7 +299,7 @@ class AuthRepositoryImpl @Inject constructor(
     // Inside your AuthRepositoryImpl class:
     override suspend fun fetchAvaPics(): Result<List<AvaPic>> = runCatching {
         // 1. Fetch the raw response body from the API endpoint
-        val response: AvaGetPicturesResponseDto = httpClient.get("${baseUrl}pictures").body()
+        val response: AvaGetPicturesResponseDto = httpClient.get("pictures").body()
 
         // 2. Extract the base storage URL dynamically from the user's avatar_url.
         // Given: "https://my.vsevolod.dynv6.net:8443/storage/v1/object/public/user-uploads/..."
@@ -336,7 +334,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deletePicture(storagePath: String): Result<Boolean> = runCatching {
-        val r = httpClient.delete("${baseUrl}pictures") {
+        val r = httpClient.delete("pictures") {
             setBody(mapOf("storage_path" to storagePath))
         }
         // TODO: check response body and refactor server code

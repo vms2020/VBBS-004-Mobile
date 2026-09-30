@@ -24,7 +24,8 @@ class RateRepositoryImpl @Inject constructor(
 ) : CurrencyRateRepository {
 
     override suspend fun getDailyRates(date: LocalDate?): Result<CurrencyDailyRates> = runCatching {
-        val dto: CbrDailyDto = httpClient.get("${BuildConfig.BASE_URL}cbr/daily") {
+        //val dto: CbrDailyDto = httpClient.get("${BuildConfig.BASE_URL}cbr/daily") {
+        val dto: CbrDailyDto = httpClient.get("cbr/daily") {
             date?.let { parameter("date_req", it.toApiDateString()) }   // dd/MM/yyyy, optional
         }.body()
         dto.toDomainRates()
@@ -35,7 +36,8 @@ class RateRepositoryImpl @Inject constructor(
         from: LocalDate,
         to: LocalDate,
     ): Result<List<CurrencyRatePoint>> = runCatching {
-        val dto: CbrDynamicDto = httpClient.get("${BuildConfig.BASE_URL}cbr/dynamic") {
+        //val dto: CbrDynamicDto = httpClient.get("${BuildConfig.BASE_URL}cbr/dynamic") {
+        val dto: CbrDynamicDto = httpClient.get("cbr/dynamic") {
             parameter("VAL_NM_RQ", currencyId)          // required
             parameter("date_req1", from.toApiDateString())
             parameter("date_req2", to.toApiDateString())

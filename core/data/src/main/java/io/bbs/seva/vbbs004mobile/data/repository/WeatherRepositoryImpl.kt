@@ -20,14 +20,12 @@ class WeatherRepositoryImpl @Inject constructor(
     private val client: HttpClient // This is the client configured with the Ktor Auth plugin
 ) : WeatherRepository {
 
-    private val baseUrl = BuildConfig.BASE_URL
-
     override suspend fun getCurrentWeather(
         lat: Double,
         lon: Double
     ): Weather {
         // Ktor automatically appends the Bearer token under the hood
-        val dto = client.get("${baseUrl}weather") {
+        val dto = client.get("weather") {
             parameter("lat", lat)
             parameter("lon", lon)
         }.body<OpenWeatherMapWeatherDto>()
@@ -42,7 +40,7 @@ class WeatherRepositoryImpl @Inject constructor(
         lat: Double,
         lon: Double
     ): Forecast {
-        val dto = client.get("${baseUrl}weather/forecast"){
+        val dto = client.get("weather/forecast"){
             parameter("lat", lat)
             parameter("lon", lon)
         }.body<OpenWeatherMapForecastDto>()
