@@ -7,4 +7,6 @@ data class User(
     val fullName: String? = null,
     val avatarUrl: String? = null,
     val age: Int? = null,
+    val roles: Set<Role>,
 )
+enum class Role { ADMIN, ROOT, AUTHOR, USER, UNKNOWN }

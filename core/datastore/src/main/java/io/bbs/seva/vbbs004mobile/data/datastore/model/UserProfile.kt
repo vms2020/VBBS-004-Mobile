@@ -1,6 +1,7 @@
 package io.bbs.seva.vbbs004mobile.data.datastore.model
 // data/datastore/model/UserProfile.kt
 
+import io.bbs.seva.vbbs004mobile.domain.model.Role
 import io.bbs.seva.vbbs004mobile.domain.model.User
 import kotlinx.serialization.Serializable
 
@@ -10,7 +11,8 @@ data class UserProfile(
     val email: String? = null,
     val fullName: String? = null,
     val avatarUrl: String? = null,
-    val age: Int? = null
+    val age: Int? = null,
+    val roles: Set<Role>? = null,
 )
 
 // The Mapper: Converts your data layer model to your domain layer model
@@ -20,6 +22,7 @@ fun UserProfile.toDomain(): User {
         email = this.email ?: "",
         fullName = this.fullName,
         avatarUrl = this.avatarUrl,
-        age = this.age
+        age = this.age,
+        roles = this.roles ?: emptySet(),
     )
 }

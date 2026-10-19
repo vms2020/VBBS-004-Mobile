@@ -1,5 +1,5 @@
-// feature/auth/.../presentation/navigation/AuthEntries.kt
 package io.bbs.seva.vbbs004mobile.presentation.navigation
+// feature/auth/src/main/java/io/bbs/seva/vbbs004mobile/presentation/navigation/AuthEntries.kt
 
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel   // same import AppRoot uses
 import androidx.navigation3.runtime.EntryProviderScope

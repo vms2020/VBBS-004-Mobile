@@ -46,10 +46,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import io.bbs.seva.vbbs004mobile.R
 import io.bbs.seva.vbbs004mobile.core.designsystem.topbar.LocalTopBarController
@@ -59,7 +61,6 @@ import io.bbs.seva.vbbs004mobile.presentation.menu.MenuItem
 import io.bbs.seva.vbbs004mobile.presentation.menu.getDestinationIcon
 import io.bbs.seva.vbbs004mobile.presentation.navigation.AppNavigator
 import io.bbs.seva.vbbs004mobile.presentation.navigation.Destination
-import io.bbs.seva.vbbs004mobile.presentation.screens.blogs.BlogsScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.chats.ChatsScreen
 import io.bbs.seva.vbbs004mobile.presentation.screens.shops.ShopsScreen
 import kotlinx.coroutines.launch
@@ -72,8 +73,9 @@ fun getMenuItems(isAuthenticated: Boolean): List<MenuItem> {
             when {
                 // dest == Destination.Logout -> isAuthenticated
                 dest.requiresAuth -> isAuthenticated
-                else -> !isAuthenticated || dest == Destination.CurrencyRates
-                        || dest == Destination.SettingsDest
+                else -> !isAuthenticated
+                        || dest == Destination.CurrencyRates // obj
+                        || dest is Destination.SettingsDest // class
             }
         }
         .map { dest -> MenuItem(dest, getDestinationIcon(dest)) }
@@ -126,9 +128,9 @@ fun AppRoot(
         entryProvider<NavKey> {
             entryBuilders.forEach { builder -> builder(navigator) }
 
-            entry<Destination.Blogs> {
-                BlogsScreen()
-            }
+//            entry<Destination.Blogs> {
+//                BlogsScreen()
+//            }
             entry<Destination.Shops> {
                 ShopsScreen()
             }

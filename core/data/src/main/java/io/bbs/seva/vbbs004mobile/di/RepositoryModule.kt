@@ -6,11 +6,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.bbs.seva.vbbs004mobile.data.repository.AppSettingsRepositoryImpl
 import io.bbs.seva.vbbs004mobile.data.repository.AuthRepositoryImpl
+import io.bbs.seva.vbbs004mobile.data.repository.BlogRepositoryImpl
 import io.bbs.seva.vbbs004mobile.data.repository.GeoLocationRepositoryImpl
 import io.bbs.seva.vbbs004mobile.data.repository.RateRepositoryImpl
 import io.bbs.seva.vbbs004mobile.data.repository.WeatherRepositoryImpl
 import io.bbs.seva.vbbs004mobile.domain.repository.AppSettingsRepository
 import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
+import io.bbs.seva.vbbs004mobile.domain.repository.BlogRepository
 import io.bbs.seva.vbbs004mobile.domain.repository.CurrencyRateRepository
 import io.bbs.seva.vbbs004mobile.domain.repository.GeoLocationRepository
 import io.bbs.seva.vbbs004mobile.domain.repository.WeatherRepository
@@ -49,5 +51,11 @@ abstract class RepositoryModule {
     abstract fun bindRateRepository(
         impl: RateRepositoryImpl
     ): CurrencyRateRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindBlogRepository(
+        impl: BlogRepositoryImpl
+    ): BlogRepository
 
 }

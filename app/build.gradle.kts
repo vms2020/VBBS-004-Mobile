@@ -64,6 +64,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature:blogs_posts"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:currency_rates"))
 

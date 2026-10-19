@@ -1,6 +1,6 @@
 package io.bbs.seva.vbbs004mobile.di
+// core/network/src/main/java/io/bbs/seva/vbbs004mobile/di/NetworkModule.kt
 
-// di/NetworkModule.kt
 import android.os.Build
 import android.util.Log
 import androidx.datastore.core.DataStore

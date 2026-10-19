@@ -22,6 +22,7 @@ import io.bbs.seva.vbbs004mobile.di.ApplicationScope
 import io.bbs.seva.vbbs004mobile.di.ProfileDataStore
 import io.bbs.seva.vbbs004mobile.di.TokensDataStore
 import io.bbs.seva.vbbs004mobile.domain.model.AvaPic
+import io.bbs.seva.vbbs004mobile.domain.model.Role
 import io.bbs.seva.vbbs004mobile.domain.model.User
 import io.bbs.seva.vbbs004mobile.domain.repository.AuthRepository
 import io.bbs.seva.vbbs004mobile.session.SessionManager
@@ -49,6 +50,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
 import javax.inject.Inject
+import kotlin.collections.toSet
 
 private const val TAG = "AuthRepositoryImpl"
 
@@ -74,7 +76,7 @@ class AuthRepositoryImpl @Inject constructor(
     override val userProfile: StateFlow<User?> = profileDataStore.data
         .map { if (it.id.isNullOrBlank()) null else it.toDomain() }
         .stateIn(appScope, SharingStarted.Eagerly, null)
-    
+
 
     override suspend fun login(email: String, password: String): Result<User> = runCatching {
         val response: AuthResponse = httpClient.post("auth/login") {
@@ -106,7 +108,16 @@ class AuthRepositoryImpl @Inject constructor(
             response.user.email,
             response.user.userMetadata.fullName,
             response.user.userMetadata.avatarUrl,
-            response.user.userMetadata.age
+            response.user.userMetadata.age,
+            response.user.appMetadata.userRoles?.map {
+                when (it) {
+                    "root" -> Role.ROOT
+                    "admin" -> Role.ADMIN
+                    "author" -> Role.AUTHOR
+                    "user" -> Role.USER
+                    else -> Role.UNKNOWN
+                }
+            }?.toSet() ?: emptySet()
         )
     }
 
@@ -201,7 +212,7 @@ class AuthRepositoryImpl @Inject constructor(
             // Parse response body containing metadata data block maps
             val responseBody: PicturesUploadResponseDto = uploadResponse.body()
             finalAvatarUrl = responseBody.data?.url
-            if(finalAvatarUrl.isNullOrBlank()){
+            if (finalAvatarUrl.isNullOrBlank()) {
                 throw Exception("pic avatar is null or blank")
             }
         } else {
@@ -284,7 +295,16 @@ class AuthRepositoryImpl @Inject constructor(
                 email = response.user.email,
                 fullName = response.user.userMetadata.fullName,
                 avatarUrl = response.user.userMetadata.avatarUrl,
-                age = response.user.userMetadata.age
+                age = response.user.userMetadata.age,
+                roles = response.user.appMetadata.userRoles?.map {
+                    when (it) {
+                        "root" -> Role.ROOT
+                        "admin" -> Role.ADMIN
+                        "author" -> Role.AUTHOR
+                        "user" -> Role.USER
+                        else -> Role.UNKNOWN
+                    }
+                }?.toSet() ?: emptySet()
             )
         }
         User(
@@ -292,7 +312,16 @@ class AuthRepositoryImpl @Inject constructor(
             response.user.email,
             response.user.userMetadata.fullName,
             response.user.userMetadata.avatarUrl,
-            response.user.userMetadata.age
+            response.user.userMetadata.age,
+            response.user.appMetadata.userRoles?.map {
+                when (it) {
+                    "root" -> Role.ROOT
+                    "admin" -> Role.ADMIN
+                    "author" -> Role.AUTHOR
+                    "user" -> Role.USER
+                    else -> Role.UNKNOWN
+                }
+            }?.toSet() ?: emptySet()
         )
     }
 

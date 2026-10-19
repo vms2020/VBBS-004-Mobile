@@ -1,4 +1,5 @@
 package io.bbs.seva.vbbs004mobile.di
+// feature/currency_rates/src/main/java/io.bbs.seva.vbbs004mobile/di/CurrencyRatesNavModule.kt
 
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey

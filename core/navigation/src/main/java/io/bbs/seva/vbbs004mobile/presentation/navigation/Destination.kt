@@ -1,5 +1,5 @@
 package io.bbs.seva.vbbs004mobile.presentation.navigation
-// presentation/navigation/Destination.kt
+// core/navigation/src/main/java/io/bbs/seva/vbbs004mobile/presentation/navigation/Destination.kt
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
@@ -41,7 +41,17 @@ sealed class Destination : NavKey {
     data object EditProfile : Destination()
 
     @Serializable
-    data object Blogs : Destination()
+    data object BlogsPosts : Destination()
+
+    @Serializable
+    data class BlogPostDetail(
+        val slug: String,
+    ) : Destination()
+
+    @Serializable
+    data class BlogPostEditor(
+        val slug: String?,
+    ) : Destination()
 
     @Serializable
     data object Shops : Destination()
@@ -50,7 +60,7 @@ sealed class Destination : NavKey {
     data object Chats : Destination()
 
     @Serializable
-    class SettingsDest: Destination()
+    class SettingsDest : Destination()
 
     // Metadata
     val title: String
@@ -63,16 +73,18 @@ sealed class Destination : NavKey {
             Signup -> "Sign Up"
             Logout -> "Logout"
             EditProfile -> "Edit Profile"
-            Blogs -> "Blogs"
+            BlogsPosts -> "Blogs"
             Shops -> "Shops"
             Chats -> "Chats"
             is CurrencyDynamics -> "Currency Rates Dynamics"
             is SettingsDest -> "Settings"
+            is BlogPostDetail -> "BlogPost Detail"
+            is BlogPostEditor -> "BlogPost Editor"
         }
 
     val requiresAuth: Boolean
         get() = when (this) {
-            Login, Signup, CurrencyRates, SettingsDest() -> false
+            Login, Signup, CurrencyRates, is SettingsDest -> false
             else -> true
         }
 

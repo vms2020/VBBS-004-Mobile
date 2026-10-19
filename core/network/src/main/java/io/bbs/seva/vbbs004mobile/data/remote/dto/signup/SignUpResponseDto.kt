@@ -2,6 +2,7 @@ package io.bbs.seva.vbbs004mobile.data.remote.dto.signup
 
 
 import io.bbs.seva.vbbs004mobile.data.security.AuthTokens
+import io.bbs.seva.vbbs004mobile.domain.model.Role
 import io.bbs.seva.vbbs004mobile.domain.model.User
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -75,6 +76,7 @@ fun SignUpResponseDto.toDomainUser() = User(
     fullName = this.user?.userMetadata?.fullName,
     avatarUrl = this.user?.userMetadata?.avatarUrl,
     age = this.user?.userMetadata?.age,
+    roles = emptySet(),
 )
 
 fun SignUpResponseDto.toAuthToken(): AuthTokens =
@@ -82,3 +84,4 @@ fun SignUpResponseDto.toAuthToken(): AuthTokens =
         accessToken = this.accessToken,
         refreshToken = this.refreshToken,
     )
+

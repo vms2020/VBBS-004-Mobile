@@ -27,7 +27,8 @@ TITLE="$(echo "$NAME" | sed 's/\([a-z0-9]\)\([A-Z]\)/\1 \2/g')"
 
 BASE="feature/$SNAKE"
 PKG="io.bbs.seva.vbbs004mobile"
-PKG_DIR="$BASE/src/main/java/$PKG"
+PKG_PATH="io/bbs/seva/vbbs004mobile"
+PKG_DIR="$BASE/src/main/java/$PKG_PATH"
 
 [[ -e "$BASE" ]] && { echo "ERROR: $BASE already exists"; exit 1; }
 
