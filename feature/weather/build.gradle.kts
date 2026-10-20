@@ -13,6 +13,8 @@ dependencies {
     implementation(project(":core:designsystem"))  // theme
 
     implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)

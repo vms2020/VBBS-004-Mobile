@@ -53,8 +53,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -69,10 +67,11 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import dagger.hilt.android.qualifiers.ApplicationContext
 import androidx.core.net.toUri
 import androidx.core.graphics.scale
+import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 
 
 sealed class DialogType(val title: String, val message: String, val confirmText: String) {

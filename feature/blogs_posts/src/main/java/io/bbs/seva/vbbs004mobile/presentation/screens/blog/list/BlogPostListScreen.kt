@@ -46,7 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import io.bbs.seva.vbbs004mobile.domain.model.BlogPost
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -144,7 +144,7 @@ private fun BlogPostCard(
                 AsyncImage(
                     model = post.coverImageUrl,
                     contentDescription = null,
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.FillWidth,
                     modifier = Modifier
                         .size(72.dp)
                         .clip(RoundedCornerShape(8.dp)),
@@ -175,6 +175,11 @@ private fun BlogPostCard(
                         }
                     }
                 }
+                Text(
+                    text = "Posted by: <${post.authorEmail}> ${post.authorFullName}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.outline,
+                )
                 val excerpt = post.excerpt
                 if (!excerpt.isNullOrBlank()) {
                     Spacer(Modifier.height(4.dp))
@@ -189,7 +194,7 @@ private fun BlogPostCard(
 
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    text = post.createdAt.formatForDisplay(),
+                    text = post.updatedAt.formatForDisplay(),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.outline,
                 )

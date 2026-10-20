@@ -27,9 +27,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.ImageLoader
+import coil3.compose.AsyncImage
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.util.DebugLogger
 import io.bbs.seva.vbbs004mobile.domain.model.BlogPostComment
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -42,6 +52,9 @@ fun BlogPostDetailScreen(
     onNavigateToEdit: (String) -> Unit = {},
     viewModel: BlogPostDetailViewModel = hiltViewModel(),
 ) {
+    val debugImageLoader = ImageLoader.Builder(LocalContext.current)
+        .logger(DebugLogger()) // <-- Put logger here
+        .build()
     val state by viewModel.state.collectAsStateWithLifecycle()
     LaunchedEffect(slug) {
         viewModel.setSlug(slug)        // ← the only new line
@@ -79,6 +92,34 @@ fun BlogPostDetailScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = modifier.fillMaxSize(),
             ) {
+                item(key = "cover") {
+                    if (!post.coverImageUrl.isNullOrBlank()) {
+                        AsyncImage(
+                            imageLoader = debugImageLoader,
+                            model = //post.coverImageUrl
+                                ImageRequest.Builder(LocalContext.current)
+                                    .data(post.coverImageUrl)
+                                    .crossfade(true)
+                                    .httpHeaders(
+                                        NetworkHeaders.Builder()
+                                            .set(
+                                                "User-Agent",
+                                                "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36"
+                                            )
+                                            .build()
+                                    )
+                                     .build()
+                            ,
+                            contentDescription = null,
+                            contentScale = ContentScale.FillWidth,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                //.size(72.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                        )
+                        Spacer(Modifier.width(12.dp))
+                    }
+                }
                 item(key = "header") {
                     val post = state.post ?: return@item
                     Column {
@@ -95,11 +136,16 @@ fun BlogPostDetailScreen(
                             }
                             Spacer(Modifier.height(6.dp))
                         }
+//                        Text(
+//                            post.title,
+//                            style = MaterialTheme.typography.headlineSmall,
+//                        )
                         Text(
-                            post.title,
-                            style = MaterialTheme.typography.headlineSmall,
+                            "Posted by: <${post.authorEmail}> ${post.authorFullName}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.outline,
                         )
-                        Spacer(Modifier.height(8.dp))
+                        //Spacer(Modifier.height(8.dp))
                         Text(
                             "Created ${post.createdAt.formatDisplay()}",
                             style = MaterialTheme.typography.labelSmall,

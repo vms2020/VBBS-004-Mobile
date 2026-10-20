@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -65,6 +66,13 @@ fun EntryProviderScope<NavKey>.blogsPostsEntryBuilder(navigator: AppNavigator) {
                 TopBarState(
                     title = titleText, // state.post?.title ?: "Post",
                     actions = buildList {
+                        add(
+                            TopBarAction.MyTopBarActionIconButton(
+                                icon = Icons.Default.Refresh,
+                                contentDescription = "Refresh",
+                                onClick = { viewModel.refresh() },
+                            )
+                        )
                         if (canEdit) {
                             add(
                                 TopBarAction.MyTopBarActionIconButton(

@@ -28,6 +28,10 @@ import java.time.OffsetDateTime
 data class BlogPostDto(
     @SerialName("author_id")
     val authorId: String, // = null, // bc82c0f1-c10e-4f81-a456-a70cb521b8c7
+    @SerialName("author_email")
+    val authorEmail: String? = null,
+    @SerialName("author_full_name")
+    val authorFullName: String? = null,
     @SerialName("comments_enabled")
     val commentsEnabled: Boolean = true, // ? = null, // true
     @SerialName("content")
@@ -61,6 +65,8 @@ fun BlogPostDto.toDomain(): BlogPost = BlogPost(
     coverImageUrl = coverImageUrl,
     published = published,
     authorId = authorId,
+    authorEmail = authorEmail?:"",
+    authorFullName = authorFullName?:"",
     createdAt = OffsetDateTime.parse(createdAt).toInstant(),//Instant.parse(createdAt),
     updatedAt = OffsetDateTime.parse(updatedAt).toInstant(),//Instant.parse(updatedAt),
 )

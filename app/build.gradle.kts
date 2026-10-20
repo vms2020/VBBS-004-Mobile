@@ -26,8 +26,8 @@ android {
         applicationId = "io.bbs.seva.vbbs004mobile"
         minSdk = 24
         targetSdk = 37
-        versionCode = 5
-        versionName = "v0.0.5-alpha"
+        versionCode = 6
+        versionName = "v0.0.6-alpha"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 //        val localProperties = Properties().apply {
@@ -95,7 +95,7 @@ dependencies {
     //implementation(libs.osmdroid.android)
 
     implementation(libs.coil.compose)
-
+    implementation(libs.coil.network.okhttp)
     implementation(libs.ktor.client.auth)
     implementation(libs.slf4j.simple)
     // implementation(libs.logback.android)

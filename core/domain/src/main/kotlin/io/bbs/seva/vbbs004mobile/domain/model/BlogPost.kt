@@ -14,6 +14,8 @@ data class BlogPost(
     val coverImageUrl: String?,
     val published: Boolean,
     val authorId: String,
+    val authorEmail: String,
+    val authorFullName: String,
     val createdAt: Instant,
     val updatedAt: Instant,
 )
