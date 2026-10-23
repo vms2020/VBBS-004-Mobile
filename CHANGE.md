@@ -1,64 +1,36 @@
-# v0.0.2-alpha — Modular architecture release
+# Release Notes — v0.0.7-alpha
 
-## Architecture
+**deep alpha** build intended strictly for testers. Expect frequent crashes, broken features, and unoptimized performance. Proceed with caution.
 
-- Migrated from single-module app to 12 modules: `:core:` (domain, common, datastore, network, data, designsystem, navigation) + `:feature:` (auth, home, weather, profile, location, currency_rates)
-- `build-logic/`: 5 convention plugins (`vbbs.android.*`, `vbbs.kotlin.jvm`); Hilt and desugaring folded in — one source of truth for module config
-- Features self-register navigation entries via Hilt `@IntoSet` multibinding; `:app` has zero feature-screen imports (grep-verified)
-- Dependency direction enforced: features -> `core:data` -> `core:network`/`core:datastore` -> `core:domain`; `core:domain` is pure Kotlin
+---
 
-## New: CurrencyRates feature
+## What's New in v0.0.7-alpha
 
-- Daily CBR rates via own xml->json converter (`cbr/daily`, `cbr/dynamic`)
-- Date selection (DatePickerDialog) for historical daily rates
-- DateRangePicker interval selection for dynamics
-- Currency dynamics sub-screen: 30-day history, min/max/avg stats
-- Typed errors (`AppError`: Network/Server/Unknown), classified at data boundary, localized en/ru, Retry flow
-- Pull-to-refresh, effective-date title in top bar
-- Verified against live api via Hilt instrumented tests
+### 1. Blog Comment Metadata Expansion
+* **Enhanced Author Tracking**: Extended both the `BlogPostComment` domain schema and `BlogPostCommentDto` network mapping layers to capture, parse, and propagate `authorEmail` and `authorFullName` variables across remote database pipelines.
+* **Data Safety**: Applied safe defaults (`?:""`) at the network boundary to handle legacy comments lacking profile details.
 
-## New: TopBar system
+### 2. UI Polish & Monospace Typography Refactor
+* **Content Typography**: Transformed text presentation layers across the `BlogPostDetailScreen` framework—specifically affecting creation stamps, update timestamps, body contents, and child comment strings—to render exclusively using `FontFamily.Monospace`.
+* **System Scaffold TopBar**: Customized global Material 3 `TopAppBar` defaults hoisted in `AppRoot`, establishing a clearer visual baseline contrast by shifting the container surface to `secondaryContainer` and titles to `secondary`.
+* **Layout Margin Alignment**: Fine-tuned the blog detail screen `LazyColumn` bounds by removing the redundant top content padding offset (`top = 0.dp`), eliminating excessive padding gaps directly beneath the app toolbar.
 
-- Shell renders hoisted state; features declare title/actions per entry
-- SideEffect re-assertion + owner-guard against lifecycle races
-- Navigation icon: back for sub-screens, menu for top-level
+---
 
-## Weather improvements
+##  Core Architecture & Foundation (Cumulative)
 
-- Two-flag state machine (isLoading/isRefreshing), retry, pull-to-refresh
-- Reactive reload on location change
+### Modular Infrastructure
+* **Multi-Module System**: Decoupled monolithic app roots into 12 standalone functional layers, separating generic `:core:` logic (`domain`, `common`, `datastore`, `network`, `data`, `designsystem`, `navigation`) from dynamic feature plugins.
+* **Feature Multibinding**: Integrated self-registering navigation configurations via Hilt `@IntoSet` multibindings, allowing the primary `:app` shell module to operate with zero feature-screen package imports.
+* **Dependency Enforcement**: Implemented rigid architectural rules ensuring logic paths move sequentially from features down to core modules, leaving `core:domain` as a pure, lightweight Kotlin layer.
 
-## Fixes
+### Feature Capabilities
+* **Currency Rates Feature**: Built complete internal CBR pipelines featuring localized multi-date history lookups, tabular 30-day stats, pull-to-refresh routines, and unified error handling flows (`AppError`).
+* **Dynamic Settings Layer**: Replaced hardcoded network values with reactive flows sourced from data stores, supporting dynamic remote URL switches and safe proxy routing options down through Ktor clients.
+* **RBAC Controls**: Enabled deep role-based access configurations mapping authentication metadata records down to security access sets (`ADMIN`, `ROOT`, `AUTHOR`, `USER`).
 
-- Home: first-frame real data (hot StateFlow + seeded stateIn, `---` gone)
-- Splash gate corrected for hot flows (filterNotNull, session-guarded)
-- Logout events via Channel (rotation-safe, no conflation)
-- ViewModel init-order crash fixed (state before init; Main.immediate law)
-- androidTest APK INTERNET permission (silent socket-timeout cause)
+---
 
-## Deferred / known issues
-
-- SOCKS proxy 127.0.0.1:9150 hardcoded in NetworkModule (Tor) — breaks without it; needs build flag
-- Token encryption: CryptoManager AES-GCM/Keystore in place; Tink variant removed as dead
-- Placeholder screens (blogs/shops/chats) await feature graduation
-- Weather conditions not localized yet (provider strings)
-
-## Engineering laws
-
-1. One source of truth: derived `stateIn` seeds from `upstream.value`, never a hardcoded default.
-2. Repositories expose existing state as hot StateFlow (appScope, Eagerly); cold flows for one-shots only.
-3. `e.message` is for `Log.e`, never for `Text()`. Typed `AppError` at the boundary, localized strings at render.
-4. Events ride Channels; state rides StateFlow.
-5. Screens take callbacks, not ViewModels; entries take navigators, not backstacks.
-6. The shell holds no data layer (grep-enforced). Exception: splash-gate in MainActivity.
-7. `mkdir -p` before `git mv`.
-8. `**/build/` in .gitignore — one rule for all modules.
-9. Class FQNs are global across the APK — module-prefix your classes.
-10. The working source is the spec. Verify library behavior on your version.
-11. One commit per step; build green before commit; CLI over IDE.
-12. Second occurrence of a pattern = extract shared code.
-13. Nav3: key fields live in the key object; pass `entry -> screen -> VM` explicitly (SavedStateHandle is not auto-populated — crash-verified).
-14. androidTest APK is its own app: inherits nothing, permissions included.
-15. Ktor renames exceptions: classify with `io.ktor.client.network.sockets.*`, never `java.net.*`.
-16. Property initializers run top-to-bottom: `init { load() }` requires state declared above.
-    
+## ⚠️ Deferred / Known Issues
+* **Proxy Hardcoding**: The SOCKS proxy configurations remain statically set to `127.0.0.1:9150` inside the main `NetworkModule` definition; all default connection profiles currently mandate a local active Tor instance to complete successful client request flows.
+* **Localization Coverage**: Weather reporting telemetry text payloads remain unlocalized and reflect language properties directly generated by remote engine data providers.

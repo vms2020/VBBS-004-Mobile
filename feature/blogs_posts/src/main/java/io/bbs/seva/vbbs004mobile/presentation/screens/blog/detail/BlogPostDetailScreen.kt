@@ -1,6 +1,7 @@
 package io.bbs.seva.vbbs004mobile.presentation.screens.blog.detail
 // feature/blogs_posts/src/main/java/io/bbs/seva/vbbs004mobile/presentation/screens/blog/detail/BlogPostDetailScreen.kt
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,8 +29,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -88,9 +91,14 @@ fun BlogPostDetailScreen(
         state.post != null -> {
             val post = state.post!!
             LazyColumn(
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = PaddingValues(
+                    top = 0.dp,
+                    bottom = 16.dp,
+                    start = 16.dp,
+                    end = 16.dp
+                ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = modifier.fillMaxSize(),
+                modifier = modifier.fillMaxSize(), // .border(width = 1.dp, color = Color.Cyan,),
             ) {
                 item(key = "cover") {
                     if (!post.coverImageUrl.isNullOrBlank()) {
@@ -108,8 +116,7 @@ fun BlogPostDetailScreen(
                                             )
                                             .build()
                                     )
-                                     .build()
-                            ,
+                                    .build(),
                             contentDescription = null,
                             contentScale = ContentScale.FillWidth,
                             modifier = Modifier
@@ -122,7 +129,12 @@ fun BlogPostDetailScreen(
                 }
                 item(key = "header") {
                     val post = state.post ?: return@item
-                    Column {
+                    Column(
+//                        modifier = Modifier.border(
+//                            width = 1.dp,
+//                            color = Color.Cyan,
+//                        ),
+                    ) {
                         if (!post.published) {
                             Surface(
                                 color = MaterialTheme.colorScheme.tertiaryContainer,
@@ -150,15 +162,23 @@ fun BlogPostDetailScreen(
                             "Created ${post.createdAt.formatDisplay()}",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.outline,
+                            fontFamily = FontFamily.Monospace,
                         )
                         Text(
                             "Updated ${post.updatedAt.formatDisplay()}",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.outline,
+                            fontFamily = FontFamily.Monospace,
                         )
                     }
                 }
-                item { Text(post.content, style = MaterialTheme.typography.bodyLarge) }
+                item {
+                    Text(
+                        post.content,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontFamily = FontFamily.Monospace,
+                    )
+                }
                 item { HorizontalDivider() }
                 item {
                     Text(
@@ -211,8 +231,17 @@ private fun CommentRow(
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.outline,
             )
+            Text(
+                "Posted by: <${comment.authorEmail}> ${comment.authorFullName}",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.outline,
+            )
             Spacer(Modifier.height(4.dp))
-            Text(comment.content, style = MaterialTheme.typography.bodyMedium)
+            Text(
+                comment.content,
+                style = MaterialTheme.typography.bodyMedium,
+                fontFamily = FontFamily.Monospace,
+            )
         }
         if (canDelete) {
             TextButton(onClick = onDelete) { Text("×") }

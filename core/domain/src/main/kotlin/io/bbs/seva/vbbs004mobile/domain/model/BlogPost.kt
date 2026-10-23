@@ -24,6 +24,8 @@ data class BlogPostComment(
     val id: String,
     val blogPostId: String,
     val authorId: String,
+    val authorEmail: String,
+    val authorFullName: String,
     val content: String,
     val createdAt: Instant,
 )
